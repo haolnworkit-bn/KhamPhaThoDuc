@@ -159,6 +159,8 @@ test('mở bảng thông tin di sản và giữ tiến trình sau tải lại', 
 });
 
 test('cổng đã mở cho phép đổi cảnh nhiều lần', async ({ page }, testInfo) => {
+  // Compare static world frames while honoring OS reduced-motion preference.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const completedSave = makeSave({
     quest: { guideSpoken: true, visitedLocations: ['dinh_tho_duc', 'den_can_vang', 'chua_thap_linh'], portalUsed: false, completed: false },
     discoveredLocations: ['dinh_tho_duc', 'den_can_vang', 'chua_thap_linh'],
