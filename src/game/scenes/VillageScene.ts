@@ -254,8 +254,41 @@ export class VillageScene extends Phaser.Scene {
   }
 
   private createMarker(x: number, y: number, color: number, text: string): Phaser.GameObjects.Container {
+    // Consistent illustrative navigation symbols: no claim about a monument's architecture.
     const marker = this.add.container(x, y).setDepth(y + 14);
-    marker.add([this.add.circle(0, 0, 28, 0xfff7e5, .82).setStrokeStyle(4, color), this.add.circle(0, 0, 14, color), this.add.text(0, 37, text, { align: 'center', fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '12px', color: '#173b33', backgroundColor: '#fff7e5', padding: { x: 6, y: 3 }, fontStyle: 'bold' }).setOrigin(.5, 0)]);
+    const portal = text === 'CỔNG THỜI GIAN';
+    const art = this.add.graphics();
+    art.fillStyle(0x21382d, 0.20).fillEllipse(2, 19, 68, 20);
+    art.fillStyle(0x9a8366).fillRoundedRect(-34, 13, 68, 8, 3);
+    art.fillStyle(0xe5d1a5).fillRoundedRect(-31, 7, 62, 8, 3);
+    if (portal) {
+      art.fillStyle(0x4e355d).fillRoundedRect(-29, -42, 12, 53, 3);
+      art.fillRoundedRect(17, -42, 12, 53, 3);
+      art.fillStyle(0x7c5a8d).fillRoundedRect(-34, -49, 68, 13, 5);
+      art.fillStyle(0xb99ccd).fillEllipse(0, -19, 32, 39);
+      art.fillStyle(0x51355f).fillEllipse(0, -19, 24, 30);
+      art.lineStyle(3, 0xd7b97a).strokeEllipse(0, -19, 24, 30);
+      art.fillStyle(0xf0d4a0).fillCircle(0, -20, 6);
+    } else {
+      // Signpost and scroll icon; a heritage location marker, not a modeled building.
+      art.fillStyle(0x654736).fillRoundedRect(-5, -29, 10, 42, 3);
+      art.fillStyle(0x744937).fillRoundedRect(-29, -56, 58, 33, 7);
+      art.fillStyle(0xf3e3bb).fillRoundedRect(-25, -52, 50, 25, 5);
+      art.lineStyle(2, color).strokeRoundedRect(-25, -52, 50, 25, 5);
+      art.fillStyle(color).fillCircle(-12, -40, 6);
+      art.fillStyle(0xc7a875).fillRoundedRect(-2, -46, 22, 3, 1);
+      art.fillRoundedRect(-2, -39, 17, 3, 1);
+    }
+    const label = this.add.text(0, 26, text, {
+      align: 'center',
+      fontFamily: '"Be Vietnam Pro", sans-serif',
+      fontSize: '12px',
+      color: '#173b33',
+      backgroundColor: '#fff7e5',
+      padding: { x: 6, y: 3 },
+      fontStyle: 'bold',
+    }).setOrigin(.5, 0);
+    marker.add([art, label]);
     return marker;
   }
 
