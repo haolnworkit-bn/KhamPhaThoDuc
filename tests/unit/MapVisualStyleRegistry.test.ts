@@ -4,6 +4,7 @@ import type { MapVisualStyleManifest } from '../../src/assets/mapVisualTypes';
 import { MapVisualStyleRegistry } from '../../src/assets/MapVisualStyleRegistry';
 import { validateMapVisualStyles } from '../../src/assets/validateMapVisualStyles';
 import manifestJson from '../../public/data/map-visual-styles.json';
+import geographicMapJson from '../../public/data/geographic-map.json';
 
 const manifest = manifestJson as unknown as MapVisualStyleManifest;
 const map = {
@@ -50,5 +51,20 @@ describe('MapVisualStyleRegistry', () => {
   it('rejects a different map', () => {
     const registry = new MapVisualStyleRegistry(manifest);
     expect(() => registry.resolve({ ...map, mapId: 'another-map' } as unknown as GeographicMap, 'present')).toThrow('mapId');
+  });
+  it('resolves every checked-in OSM feature exactly once in the present era', () => {
+    const registry = new MapVisualStyleRegistry(manifest);
+    const actualMap = geographicMapJson as unknown as GeographicMap;
+    const resolved = registry.resolve(actualMap, 'present');
+    const expectedCounts = { roads: 125, footpaths: 5, water: 2, landuse: 3, buildings: 4 };
+    expect(Object.fromEntries(Object.keys(expectedCounts).map((layer) => [layer, resolved.filter((item) => item.layer === layer).length]))).toEqual(expectedCounts);
+    expect(new Set(resolved.map((item) => `${item.layer}:${item.sourceIndex}`)).size).toBe(resolved.length);
+    expect(resolved.every((item) => item.feature.points.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y)))).toBe(true);
+  });
+  it('resolves only the two checked-in water references for 1077', () => {
+    const registry = new MapVisualStyleRegistry(manifest);
+    const historical = registry.resolve(geographicMapJson as unknown as GeographicMap, 'ly_1077');
+    expect(historical).toHaveLength(2);
+    expect(historical.every((item) => item.layer === 'water' && item.style.interpretation === 'contemporary-reference')).toBe(true);
   });
 });

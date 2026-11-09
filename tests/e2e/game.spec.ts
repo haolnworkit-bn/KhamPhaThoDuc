@@ -12,6 +12,17 @@ const makeSave = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
+const canvasPixelHash = (page: import('@playwright/test').Page) => page.locator('canvas').evaluate((element) => {
+  const canvas = element as HTMLCanvasElement;
+  const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+  if (!gl) throw new Error('Expected Phaser to use a WebGL canvas');
+  const pixels = new Uint8Array(canvas.width * canvas.height * 4);
+  gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  let hash = 2166136261;
+  for (const byte of pixels) { hash ^= byte; hash = Math.imul(hash, 16777619); }
+  return `${canvas.width}x${canvas.height}:${hash >>> 0}`;
+});
+
 test('mở trang và bắt đầu một phiên chơi', async ({ page }) => {
   await page.goto('./');
   await expect(page.getByRole('heading', { name: /Thọ Đức/ })).toBeVisible();
@@ -30,6 +41,13 @@ test('báo lỗi khi không thể tải Asset Registry', async ({ page }) => {
   await page.goto('./');
   await expect(page.getByRole('heading', { name: 'Không thể khởi động' })).toBeVisible();
   await expect(page.getByText(/Unable to load visual metadata \(503\)/)).toBeVisible();
+});
+
+test('báo lỗi rõ ràng khi không thể tải Map Visual Style Registry bắt buộc', async ({ page }) => {
+  await page.route('**/data/map-visual-styles.json', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
+  await page.goto('./');
+  await expect(page.getByRole('heading', { name: 'Không thể khởi động' })).toBeVisible();
+  await expect(page.getByText(/Unable to load map visual styles \(503\)/)).toBeVisible();
 });
 
 test('vẫn bắt đầu được khi không thể tải Scene Decoration Registry', async ({ page }) => {
@@ -105,7 +123,7 @@ test('mở bảng thông tin di sản và giữ tiến trình sau tải lại', 
   await expect(page.locator('.journal-summary')).toContainText('1/3');
 });
 
-test('cổng đã mở cho phép đổi cảnh nhiều lần', async ({ page }) => {
+test('cổng đã mở cho phép đổi cảnh nhiều lần', async ({ page }, testInfo) => {
   const completedSave = makeSave({
     quest: { guideSpoken: true, visitedLocations: ['dinh_tho_duc', 'den_can_vang', 'chua_thap_linh'], portalUsed: false, completed: false },
     discoveredLocations: ['dinh_tho_duc', 'den_can_vang', 'chua_thap_linh'],
@@ -119,10 +137,17 @@ test('cổng đã mở cho phép đổi cảnh nhiều lần', async ({ page }) 
     return { quest: save.quest, discoveredLocations: save.discoveredLocations };
   }, saveKey);
   const timeline = page.getByRole('button', { name: 'Chuyển đổi thời kỳ' });
-  await timeline.click();
-  await expect(page.locator('.game-shell')).toHaveClass(/era-ly_1077/);
-  await timeline.click();
+  await page.waitForTimeout(500);
+  const presentBefore = await page.locator('canvas').screenshot();
+  const presentHashBefore = await canvasPixelHash(page);
+  for (let index = 0; index < 12; index++) await timeline.click();
   await expect(page.locator('.game-shell')).toHaveClass(/era-present/);
+  await page.waitForTimeout(500);
+  const presentAfter = await page.locator('canvas').screenshot();
+  const presentHashAfter = await canvasPixelHash(page);
+  await testInfo.attach('present-before-era-switches', { body: presentBefore, contentType: 'image/png' });
+  await testInfo.attach('present-after-era-switches', { body: presentAfter, contentType: 'image/png' });
+  expect(presentHashAfter).toBe(presentHashBefore);
   await page.keyboard.down('ArrowDown');
   await page.waitForTimeout(300);
   await page.keyboard.up('ArrowDown');
