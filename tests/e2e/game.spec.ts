@@ -120,6 +120,7 @@ test('di chuyển thực tế tới NPC, ba di tích và cổng thời gian', as
     await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: makeSave({ player: { mapId: 'tho_duc_geographic_v1', ...target.start }, ...progress }) });
     await page.reload();
     await page.getByRole('button', { name: 'Tiếp tục' }).click();
+    await expect(page.locator('canvas[data-game-ready="true"]')).toBeVisible({ timeout: 15000 });
     await page.keyboard.down(target.key);
     try {
       await expect(page.getByRole('button', { name: new RegExp(target.prompt) })).toBeVisible({ timeout: 5000 });
