@@ -285,7 +285,7 @@ export class VillageScene extends Phaser.Scene {
     art.fillCircle(8, -28, 2.3);
     art.lineStyle(1.5, 0x945c48).lineBetween(-4, -22, 4, -22);
     const name = this.add.text(0, 30, 'NGƯỜI DẪN CHUYỆN', {
-      fontFamily: '"Be Vietnam Pro", sans-serif,
+      fontFamily: '"Be Vietnam Pro", sans-serif',
       fontSize: '11px',
       color: '#173b33',
       backgroundColor: '#fff7e5',
