@@ -40,7 +40,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`test:e2e` phục vụ production build tại `/ThoDucQueToi/` trên desktop và mobile Chromium. `npm run build` tự chạy lại pipeline bản đồ và kiểm tra dữ liệu.
+`test:e2e` phục vụ production build tại `/KhamPhaThoDuc/` trên desktop và mobile Chromium. `npm run build` tự chạy lại pipeline bản đồ và kiểm tra dữ liệu.
 
 ## Điều khiển và bản đồ
 
@@ -60,6 +60,6 @@ npm run test:e2e
 
 ## Triển khai
 
-Vite build vào `dist/` với base path `/ThoDucQueToi/`. Workflow `.github/workflows/deploy.yml` triển khai GitHub Pages khi có thay đổi trên `main` hoặc chạy thủ công. URL dự kiến: `https://haoln06.github.io/ThoDucQueToi/`.
+Vite build vào `dist/` với base path `/KhamPhaThoDuc/`. Workflow `.github/workflows/deploy.yml` chạy kiểm tra, build và triển khai GitHub Pages từ `main`. URL Pages mặc định dự kiến: `https://haolnworkit-bn.github.io/KhamPhaThoDuc/` (cần bật **Settings → Pages → Source: GitHub Actions**).
 
 Sprint này chưa có khảo sát thực địa, ảnh vệ tinh, dữ liệu thửa đất, phục dựng khảo cổ hay dẫn đường theo mạng đường. Xem [kế hoạch Sprint 02](docs/sprint-02-plan.md) và [nghiệm thu Sprint 02](docs/sprint-02-acceptance.md).
