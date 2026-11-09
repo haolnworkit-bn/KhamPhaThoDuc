@@ -155,6 +155,23 @@
       ],
       "attribution": "Original stylized illustrative heritage SVG created for KhamPhaThoDuc, not a surveyed architectural reconstruction",
       "license": "Project-owned original"
+    },
+    {
+      "id": "player-chibi-v1",
+      "category": "character",
+      "kind": "image",
+      "path": "assets/characters/player-chibi-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "attribution": "Original fictional four-direction chibi illustration created for KhamPhaThoDuc; not historical costume",
+      "license": "Project-owned original"
     }
   ],
   "animations": []
