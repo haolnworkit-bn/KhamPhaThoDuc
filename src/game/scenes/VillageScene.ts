@@ -30,6 +30,12 @@ export class VillageScene extends Phaser.Scene {
   constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
 
   create(): void {
+    this.renderedEra = null;
+    this.targetPoints = [];
+    this.nearest = null;
+    this.touchVector.set(0, 0);
+    this.pausedByUi = false;
+    this.lastPositionSave = 0;
     const { width, height } = this.session.content.map.projection.world;
     this.physics.world.setBounds(0, 0, width, height);
     this.cameras.main.setBounds(0, 0, width, height);
@@ -112,7 +118,6 @@ export class VillageScene extends Phaser.Scene {
     if (!this.eraLayer) return;
     const era = this.session.snapshot().activeEra;
     if (era === this.renderedEra) return;
-    this.renderedEra = era;
     this.eraLayer.removeAll(true);
     const historical = era === 'ly_1077';
     const { width, height } = this.session.content.map.projection.world;
@@ -123,6 +128,7 @@ export class VillageScene extends Phaser.Scene {
     const label = this.add.text(95, 95, historical ? 'THỌ ĐỨC · TÁI HIỆN DIỄN GIẢI 1077' : 'THỌ ĐỨC · BẢN ĐỒ HIỆN TẠI', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '18px', color: historical ? '#493b2c' : '#173b33', fontStyle: 'bold' });
     const note = historical ? this.add.text(95, 124, 'Không hiển thị đường/công trình hiện đại · Thủy hệ chỉ là mốc tham chiếu hiện nay', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '13px', color: '#584a36', backgroundColor: '#e6d7a8', padding: { x: 8, y: 5 } }) : null;
     this.eraLayer.add(note ? [label, note] : label);
+    this.renderedEra = era;
   }
 
   private drawMapVisualLayers(era: EraId): void {
