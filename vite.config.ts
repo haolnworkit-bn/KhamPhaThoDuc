@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: mode === 'production' ? '/ThoDucQueToi/' : '/',
+  base: mode === 'production' ? '/KhamPhaThoDuc/' : '/',
   build: { sourcemap: true },
   test: {
     environment: 'node',
