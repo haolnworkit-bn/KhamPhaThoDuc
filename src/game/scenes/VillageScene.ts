@@ -382,7 +382,8 @@ export class VillageScene extends Phaser.Scene {
   }
 
   private updateVillageNpcs(delta: number, era: EraId): void {
-    this.villageNpcs.update(delta, era);
+    // Respect reduced-motion preferences; keep villagers visibly resting.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) this.villageNpcs.update(delta, era);
     const snapshots = new Map(this.villageNpcs.snapshot().map((npc) => [npc.id, npc]));
     for (const visual of this.npcVisuals) {
       const npc = snapshots.get(visual.id);
