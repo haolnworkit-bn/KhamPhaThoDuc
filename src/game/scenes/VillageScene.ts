@@ -7,6 +7,7 @@ import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegist
 import type { MapVisualStyleRegistry } from '../../assets/MapVisualStyleRegistry';
 import type { MapVisualStyle } from '../../assets/mapVisualTypes';
 import { NavigationService } from '../../services/NavigationService';
+import { resolveWorldObstacles } from '../../services/WorldObstacleService';
 import { renderVillageArt } from '../rendering/VillageArtRenderer';
 
 interface TargetPoint { x: number; y: number; target: InteractionTarget; visual?: Phaser.GameObjects.Container }
@@ -50,7 +51,10 @@ export class VillageScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, width, height);
     this.cameras.main.setBounds(0, 0, width, height);
     this.createTextures();
-    this.navigation = new NavigationService(this.session.content.map);
+    this.navigation = new NavigationService(
+      this.session.content.map,
+      resolveWorldObstacles(this.session.content.map, 'present', this.sceneDecorations, this.assetRegistry),
+    );
     this.eraLayer = this.add.container(0, 0).setDepth(-10);
     this.drawEnvironment();
     this.createTargets();
@@ -112,7 +116,23 @@ export class VillageScene extends Phaser.Scene {
     }
     const next = { x: this.player.x + this.vector.x * delta / 1000, y: this.player.y + this.vector.y * delta / 1000 };
     const era = this.session.snapshot().activeEra;
-    if (this.vector.lengthSq() > 0 && this.navigation.canMove(this.player, next, era)) this.player.setPosition(next.x, next.y);
+    if (this.vector.lengthSq() > 0) {
+      const from = { x: this.player.x, y: this.player.y };
+      if (this.navigation.canMove(from, next, era)) {
+        this.player.setPosition(next.x, next.y);
+      } else {
+        // Wall-slide: preserve the free axis when diagonal movement hits a structure.
+        const alongX = { x: next.x, y: from.y };
+        const alongY = { x: this.player.x, y: next.y };
+        if (Math.abs(this.vector.x) > 0 && this.navigation.canMove(from, alongX, era)) {
+          this.player.setX(alongX.x);
+        }
+        if (Math.abs(this.vector.y) > 0 &&
+          this.navigation.canMove({ x: this.player.x, y: this.player.y }, alongY, era)) {
+          this.player.setY(alongY.y);
+        }
+      }
+    }
     this.updateNearestTarget();
     this.session.updatePlayer(this.player.x, this.player.y);
     if (time - this.lastPositionSave > 1500) { this.session.flushPlayerPosition(); this.lastPositionSave = time; }
