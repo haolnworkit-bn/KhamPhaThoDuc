@@ -164,6 +164,34 @@ function drawCommunalHouse(scene: Phaser.Scene, layer: Phaser.GameObjects.Contai
     entrance.fillStyle(0x775b42).fillTriangle(sign * 149 - 11, 106, sign * 149, 95, sign * 149 + 11, 106);
   }
 
+  // Original courtyard gardens. Decorative elements are local illustration only,
+  // anchored to the existing heritage marker; they never become OSM map features.
+  const garden = scene.add.graphics();
+  for (const side of [-1, 1]) {
+    const center = side * 123;
+    garden.fillStyle(0x52684b).fillEllipse(center, 129, 61, 23);
+    garden.fillStyle(0x324f3c).fillEllipse(center, 125, 59, 17);
+    for (let i = 0; i < 7; i++) {
+      const px = center - 23 + i * 8;
+      const py = 125 + (i % 3) * 3;
+      garden.fillStyle(i % 2 === 0 ? 0xf4d390 : 0xda8c9b).fillCircle(px, py, 3.1);
+      garden.fillStyle(0x7aab69).fillEllipse(px + 3, py + 4, 8, 4);
+    }
+  }
+  // Sparse stone steps clarify the visual route toward the courtyard.
+  for (let i = 0; i < 3; i++) {
+    const w = 28 + i * 4;
+    garden.fillStyle(i % 2 === 0 ? 0xe6d5b4 : 0xd9c4a0).fillRoundedRect(-w / 2, 91 + i * 21, w, 12, 5);
+    garden.lineStyle(1, 0xb59d78, 0.7).strokeRoundedRect(-w / 2, 91 + i * 21, w, 12, 5);
+  }
+  // Stylized ceremonial banners: this is atmosphere, not an assertion of period use.
+  for (const side of [-1, 1]) {
+    const pole = side * 181;
+    garden.lineStyle(4, 0x75513b).lineBetween(pole, -37, pole, 64);
+    garden.fillStyle(0xb34d3b).fillTriangle(pole, -43, pole + side * 27, -33, pole, -18);
+    garden.fillStyle(0xe2bb6b).fillCircle(pole, -47, 5);
+  }
+
   const nameplate = scene.add.text(0, -28, 'ĐÌNH THỌ ĐỨC', {
     fontFamily: '"Be Vietnam Pro", sans-serif',
     fontSize: '14px',
@@ -180,7 +208,7 @@ function drawCommunalHouse(scene: Phaser.Scene, layer: Phaser.GameObjects.Contai
     padding: { x: 7, y: 4 },
   }).setOrigin(.5);
 
-  landmark.add([courtyard, roof, roofOutline, entrance]);
+  landmark.add([courtyard, roof, roofOutline, entrance, garden]);
   for (const lx of [-112, -71, 73, 114]) drawLantern(scene, landmark, lx, -14);
   landmark.add([nameplate, disclaimer]);
   layer.add(landmark);
