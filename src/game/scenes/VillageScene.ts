@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { EraId, MapFeature } from '../../shared/types/content';
 import type { InteractionTarget } from '../../shared/events/GameEvents';
 import type { GameSession } from '../../services/GameSession';
-import type { AssetRegistry } from '../../assets/AssetRegistry';
+import { AssetRegistry } from '../../assets/AssetRegistry';
 import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegistry';
 import type { MapVisualStyleRegistry } from '../../assets/MapVisualStyleRegistry';
 import type { MapVisualStyle } from '../../assets/mapVisualTypes';
@@ -28,6 +28,16 @@ export class VillageScene extends Phaser.Scene {
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
 
   constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
+
+  preload(): void {
+    // Phaser rasterizes these project-owned SVG files once. Missing files degrade gracefully
+    // to the existing procedural artwork inside VillageArtRenderer.
+    for (const asset of this.assetRegistry.available('present')) {
+      if (asset.kind !== 'image' || !asset.path?.endsWith('.svg')) continue;
+      const url = AssetRegistry.assetUrl(asset, import.meta.env.BASE_URL);
+      if (url && !this.textures.exists(asset.id)) this.load.svg(asset.id, url);
+    }
+  }
 
   create(): void {
     this.renderedEra = null;

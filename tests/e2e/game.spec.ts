@@ -36,6 +36,29 @@ test('mở trang và bắt đầu một phiên chơi', async ({ page }) => {
   await expect(page.locator('canvas')).toBeVisible();
 });
 
+test('tải artwork SVG gốc và vẫn chơi được khi một ảnh trang trí lỗi', async ({ page }) => {
+  const requested = [
+    '/assets/environment/tree-v1.svg',
+    '/assets/environment/house-v1.svg',
+    '/assets/heritage/dinh-tho-duc-v1.svg',
+  ];
+  const served = new Set<string>();
+  await page.route('**/assets/**/*.svg', async (route) => {
+    const url = new URL(route.request().url());
+    if (requested.some((path) => url.pathname.endsWith(path))) served.add(url.pathname);
+    if (url.pathname.endsWith('/assets/environment/house-v1.svg')) {
+      await route.fulfill({ status: 503, contentType: 'image/svg+xml', body: '' });
+      return;
+    }
+    await route.continue();
+  });
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();
+  await expect(page.locator('canvas')).toBeVisible();
+  await expect.poll(() => served.size).toBe(3);
+  await expect(page.getByRole('button', { name: /Nhật ký/ })).toBeVisible();
+});
+
 test('báo lỗi khi không thể tải Asset Registry', async ({ page }) => {
   await page.route('**/data/asset-manifest.json', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
   await page.goto('./');

@@ -36,16 +36,50 @@ export function renderVillageArt(
 
   const communalHouse = registry.getHeritage('dinh_tho_duc', era);
   if (communalHouse) {
-    drawCommunalHouse(scene, layer, dinh.x + communalHouse.offset.x, dinh.y + communalHouse.offset.y);
+    const x = dinh.x + communalHouse.offset.x;
+    const y = dinh.y + communalHouse.offset.y;
+    if (!drawImageAsset(scene, layer, registry, 'dinh-tho-duc-v1', era, x, y, 1, 0)) {
+      drawCommunalHouse(scene, layer, x, y);
+    }
   }
   sceneDecorations?.resolve(map, era).forEach((decoration) => {
     if (decoration.assetId === 'tree-procedural') {
-      drawTree(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+      if (!drawImageAsset(scene, layer, registry, 'tree-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
+        drawTree(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+      }
     }
     if (decoration.assetId === 'house-procedural') {
-      drawHouse(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+      if (!drawImageAsset(scene, layer, registry, 'house-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
+        drawHouse(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+      }
     }
   });
+}
+
+
+/**
+ * Uses real artwork only if registered, allowed in this era and successfully loaded.
+ * Visuals never participate in NavigationService collision or map positioning.
+ */
+function drawImageAsset(
+  scene: Phaser.Scene,
+  layer: Phaser.GameObjects.Container,
+  registry: AssetRegistry,
+  assetId: string,
+  era: EraId,
+  x: number,
+  y: number,
+  scale = 1,
+  depthOffset = 0,
+): boolean {
+  const asset = registry.get(assetId);
+  if (!asset || asset.kind !== 'image' || !asset.eras.includes(era) || !scene.textures.exists(asset.id)) return false;
+  const image = scene.add.image(x, y, asset.id)
+    .setOrigin(asset.anchor.x, asset.anchor.y)
+    .setScale(scale)
+    .setDepth(y + asset.depthOffset + depthOffset);
+  layer.add(image);
+  return true;
 }
 
 /** Soft clustered canopies and an offset shadow give a miniature-world silhouette. */

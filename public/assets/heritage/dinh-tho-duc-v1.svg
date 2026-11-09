@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 350" width="420" height="350">
+<defs><linearGradient id="court" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#eee0c1"/><stop offset="1" stop-color="#c4aa82"/></linearGradient><linearGradient id="roof" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#d88358"/><stop offset=".55" stop-color="#9a4638"/><stop offset="1" stop-color="#5e302c"/></linearGradient><linearGradient id="wall" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#f5e0b6"/><stop offset="1" stop-color="#cfac78"/></linearGradient></defs>
+<ellipse cx="212" cy="276" rx="187" ry="39" fill="#2c503c" opacity=".2"/>
+<rect x="25" y="213" width="370" height="122" rx="18" fill="#6d896b"/>
+<rect x="36" y="217" width="348" height="107" rx="13" fill="url(#court)" stroke="#a18a69" stroke-width="4"/>
+<path d="M48 242H372M47 265H374M45 287H375M44 310H376M100 219L80 321M165 219L155 322M235 219L238 322M300 219L316 322" stroke="#aa9575" stroke-width="2" opacity=".6"/>
+<ellipse cx="210" cy="223" rx="133" ry="20" fill="#31452f" opacity=".28"/>
+<rect x="99" y="119" width="223" height="103" rx="5" fill="#936f4d" stroke="#664936" stroke-width="4"/>
+<rect x="108" y="132" width="204" height="81" rx="3" fill="url(#wall)"/>
+<g fill="#6a4736"><rect x="115" y="131" width="11" height="82"/><rect x="164" y="131" width="12" height="82"/><rect x="246" y="131" width="12" height="82"/><rect x="293" y="131" width="11" height="82"/></g>
+<rect x="183" y="154" width="54" height="57" fill="#533a31" stroke="#c69c69" stroke-width="5"/><path d="M210 156V212" stroke="#b48758" stroke-width="3"/>
+<path d="M56 117Q97 79 148 61Q210 31 272 61Q325 80 365 117Q335 134 317 129Q210 94 102 129Q79 134 56 117Z" fill="#5a302c" stroke="#4d2928" stroke-width="5"/>
+<path d="M64 111Q131 57 211 41Q292 57 358 111Q289 85 211 83Q134 85 64 111Z" fill="url(#roof)"/>
+<path d="M75 113Q210 82 346 113" fill="none" stroke="#eaa779" stroke-width="6"/>
+<path d="M78 101Q210 70 343 101M105 88Q210 63 317 88M133 76Q210 53 290 76" fill="none" stroke="#713b32" stroke-width="2" opacity=".65"/>
+<path d="M58 113Q40 107 42 91M361 113Q382 105 377 91" fill="none" stroke="#70372d" stroke-width="6" stroke-linecap="round"/>
+<path d="M155 66Q210 22 265 66" fill="none" stroke="#d99a66" stroke-width="7" stroke-linecap="round"/>
+<path d="M196 39L210 22 224 39Z" fill="#f0cb86" stroke="#89573a" stroke-width="2"/>
+<rect x="175" y="121" width="70" height="24" rx="4" fill="#583b31" stroke="#b68a57" stroke-width="3"/>
+<path d="M125 213H295V225H125Z" fill="#9c7e5e"/><path d="M139 224H281V237H139Z" fill="#bd9d75"/><path d="M151 236H269V246H151Z" fill="#dac19c"/>
+<g><path d="M87 210V161M333 210V161" stroke="#76513b" stroke-width="5"/><path d="M77 160H97M323 160H343" stroke="#563a2c" stroke-width="7"/><ellipse cx="87" cy="176" rx="10" ry="15" fill="#d65c40" stroke="#8b3a2e" stroke-width="3"/><ellipse cx="333" cy="176" rx="10" ry="15" fill="#d65c40" stroke="#8b3a2e" stroke-width="3"/><path d="M83 171V185M329 171V185" stroke="#f7b977" stroke-width="3"/></g>
+<g><ellipse cx="61" cy="260" rx="33" ry="14" fill="#3f684a"/><ellipse cx="62" cy="249" rx="30" ry="14" fill="#5d985e"/><ellipse cx="358" cy="260" rx="33" ry="14" fill="#3f684a"/><ellipse cx="359" cy="249" rx="30" ry="14" fill="#5d985e"/></g>
+<g fill="#e5ad7d"><circle cx="48" cy="245" r="4"/><circle cx="70" cy="245" r="4"/><circle cx="350" cy="245" r="4"/><circle cx="372" cy="245" r="4"/></g>
+<g stroke="#6a5140" stroke-width="3"><path d="M23 190V295M397 190V295"/></g><g fill="#ac4939"><path d="M23 191L49 206 23 219Z"/><path d="M397 191L371 206 397 219Z"/></g>
+<rect x="111" y="328" width="198" height="18" rx="8" fill="#fff1d6" stroke="#a68a67" stroke-width="2"/>
+<text x="210" y="341" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="10" fill="#5d4034">MINH HỌA · CHƯA KHẢO SÁT</text>
+</svg>
