@@ -83,7 +83,13 @@ export class VillageScene extends Phaser.Scene {
       }),
       this.session.events.on('state', () => this.drawEnvironment()),
     );
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.unsubscribe.splice(0).forEach((off) => off()));
+    // Phaser canvas exists during preload, but movement is not safe until create() finishes.
+    // Expose a durable readiness signal for browser tests and accessibility tooling.
+    this.game.canvas.dataset.gameReady = 'true';
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      delete this.game.canvas.dataset.gameReady;
+      this.unsubscribe.splice(0).forEach((off) => off());
+    });
   }
 
   update(time: number, delta: number): void {
