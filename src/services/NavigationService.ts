@@ -1,4 +1,5 @@
 import type { EraId, GeographicMap, MapFeature, MapPoint } from '../shared/types/content';
+import { obstacleBlocksCircle, type WorldObstacle } from './WorldObstacleService';
 
 const distanceToSegment = (point: MapPoint, start: MapPoint, end: MapPoint): number => {
   const dx = end.x - start.x;
@@ -24,12 +25,13 @@ const polygonBlocksCircle = (point: MapPoint, radius: number, polygon: MapPoint[
 };
 
 export class NavigationService {
-  constructor(private readonly map: GeographicMap) {}
+  constructor(private readonly map: GeographicMap, private readonly obstacles: readonly WorldObstacle[] = []) {}
 
   isBlocked(point: MapPoint, era: EraId, radius = 18): boolean {
     const { width, height } = this.map.projection.world;
     if (point.x < radius || point.y < radius || point.x > width - radius || point.y > height - radius) return true;
     if (this.waterBlocks(point, radius)) return true;
+    if (era === 'present' && this.obstacles.some((obstacle) => obstacleBlocksCircle(point, radius, obstacle))) return true;
     if (era === 'present' && this.map.layers.buildings.some((feature) => feature.points.length >= 3 && polygonBlocksCircle(point, radius, feature.points))) return true;
     return false;
   }
