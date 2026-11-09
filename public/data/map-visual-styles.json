@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "mapId": "tho_duc_geographic_v1",
+  "styles": [
+    {
+      "id": "road-main",
+      "layer": "roads",
+      "kinds": [
+        "secondary",
+        "secondary_link",
+        "tertiary"
+      ],
+      "paint": "line",
+      "color": "#C9B28B",
+      "outlineColor": "#89785F",
+      "width": 20,
+      "alpha": 1,
+      "variants": 3,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    },
+    {
+      "id": "road-village",
+      "layer": "roads",
+      "kinds": [
+        "residential",
+        "unclassified",
+        "service"
+      ],
+      "paint": "line",
+      "color": "#DECEAC",
+      "outlineColor": "#9F9478",
+      "width": 15,
+      "alpha": 1,
+      "variants": 4,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    },
+    {
+      "id": "path-earth",
+      "layer": "footpaths",
+      "kinds": [
+        "track"
+      ],
+      "paint": "line",
+      "color": "#E8D7B6",
+      "width": 7,
+      "alpha": 1,
+      "variants": 3,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    },
+    {
+      "id": "water-river",
+      "layer": "water",
+      "kinds": [
+        "river"
+      ],
+      "paint": "line",
+      "color": "#477D87",
+      "width": 19,
+      "alpha": 0.92,
+      "variants": 2,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "interpretation": "contemporary-reference"
+    },
+    {
+      "id": "water-ditch",
+      "layer": "water",
+      "kinds": [
+        "ditch"
+      ],
+      "paint": "line",
+      "color": "#729DA1",
+      "width": 10,
+      "alpha": 0.78,
+      "variants": 2,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "interpretation": "contemporary-reference"
+    },
+    {
+      "id": "land-residential",
+      "layer": "landuse",
+      "kinds": [
+        "residential"
+      ],
+      "paint": "polygon",
+      "color": "#A4B97B",
+      "alpha": 0.64,
+      "variants": 3,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    },
+    {
+      "id": "building-general",
+      "layer": "buildings",
+      "kinds": [
+        "yes"
+      ],
+      "paint": "polygon",
+      "color": "#A34D3F",
+      "outlineColor": "#79513B",
+      "alpha": 0.92,
+      "variants": 4,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    },
+    {
+      "id": "building-school",
+      "layer": "buildings",
+      "kinds": [
+        "school"
+      ],
+      "paint": "polygon",
+      "color": "#AD8162",
+      "outlineColor": "#79513B",
+      "alpha": 0.92,
+      "variants": 2,
+      "eras": [
+        "present"
+      ],
+      "interpretation": "contemporary-osm"
+    }
+  ]
+}
