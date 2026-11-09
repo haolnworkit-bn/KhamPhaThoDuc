@@ -25,6 +25,13 @@ test('mở trang và bắt đầu một phiên chơi', async ({ page }) => {
   await expect(page.locator('canvas')).toBeVisible();
 });
 
+test('báo lỗi khi không thể tải Asset Registry', async ({ page }) => {
+  await page.route('**/data/asset-manifest.json', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
+  await page.goto('./');
+  await expect(page.getByRole('heading', { name: 'Không thể khởi động' })).toBeVisible();
+  await expect(page.getByText(/Unable to load visual metadata \(503\)/)).toBeVisible();
+});
+
 test('minimap chọn điểm đến và hiển thị khoảng cách', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();

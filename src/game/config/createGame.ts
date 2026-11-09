@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import type { AssetRegistry } from '../../assets/AssetRegistry';
 import type { GameSession } from '../../services/GameSession';
 import { VillageScene } from '../scenes/VillageScene';
 
-export function createGame(parent: HTMLElement, session: GameSession): Phaser.Game {
+export function createGame(parent: HTMLElement, session: GameSession, assetRegistry: AssetRegistry): Phaser.Game {
   return new Phaser.Game({
     type: Phaser.AUTO,
     parent,
@@ -19,6 +20,6 @@ export function createGame(parent: HTMLElement, session: GameSession): Phaser.Ga
       default: 'arcade',
       arcade: { gravity: { x: 0, y: 0 }, debug: false },
     },
-    scene: [new VillageScene(session)],
+    scene: [new VillageScene(session, assetRegistry)],
   });
 }

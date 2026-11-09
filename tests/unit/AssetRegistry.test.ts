@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AssetRegistry } from '../../src/assets/AssetRegistry';
+import { loadAssetRegistry } from '../../src/assets/loadAssetRegistry';
 import { validateAssetManifest, validateHeritageVisuals } from '../../src/assets/AssetValidator';
 import manifestJson from '../../public/data/asset-manifest.json';
 import visualsJson from '../../public/data/heritage-visuals.json';
@@ -30,5 +31,9 @@ describe('Visual Asset Foundation', () => {
   it('builds base-path-safe URLs', () => {
     expect(AssetRegistry.assetUrl({ ...manifest.assets[0], path: 'art/player.png' }, '/KhamPhaThoDuc/')).toBe('/KhamPhaThoDuc/art/player.png');
     expect(AssetRegistry.assetUrl(manifest.assets[0], '/KhamPhaThoDuc/')).toBeUndefined();
+  });
+  it('surfaces a visual metadata load failure', async () => {
+    const failedFetch: typeof fetch = async () => new Response('', { status: 503 });
+    await expect(loadAssetRegistry(failedFetch)).rejects.toThrow('Unable to load visual metadata (503).');
   });
 });

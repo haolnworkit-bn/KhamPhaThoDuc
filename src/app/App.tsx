@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GameCanvas } from '../game/GameCanvas';
+import { loadAssetRegistry } from '../assets/loadAssetRegistry';
+import type { AssetRegistry } from '../assets/AssetRegistry';
 import { loadContent } from '../content/loadContent';
 import { GameSession } from '../services/GameSession';
 import { SaveService } from '../services/SaveService';
@@ -16,6 +18,7 @@ type Modal = { type: 'guide'; step: number } | { type: 'location'; location: Her
 
 export default function App() {
   const [content, setContent] = useState<GameContent | null>(null);
+  const [assetRegistry, setAssetRegistry] = useState<AssetRegistry | null>(null);
   const [phase, setPhase] = useState<Phase>('loading');
   const [loadError, setLoadError] = useState('');
   const [state, setState] = useState<GameState>(createInitialState());
@@ -27,8 +30,8 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
-    loadContent()
-      .then((loaded) => { if (active) { setContent(loaded); setPhase('menu'); } })
+    Promise.all([loadContent(), loadAssetRegistry()])
+      .then(([loaded, registry]) => { if (active) { setContent(loaded); setAssetRegistry(registry); setPhase('menu'); } })
       .catch((error: unknown) => { if (active) { setLoadError(error instanceof Error ? error.message : 'Không thể tải dữ liệu trò chơi.'); setPhase('error'); } });
     return () => { active = false; };
   }, []);
@@ -82,7 +85,7 @@ export default function App() {
   };
 
   if (phase === 'loading') return <main className="loading-screen"><div className="loader" /><h1>Đang mở hành trình…</h1><p>Đang tải bản đồ và dữ liệu minh họa</p></main>;
-  if (phase === 'error' || !session) return <main className="fatal-error"><h1>Không thể khởi động</h1><p>{loadError}</p><button onClick={() => window.location.reload()}>Thử lại</button></main>;
+  if (phase === 'error' || !session || !assetRegistry) return <main className="fatal-error"><h1>Không thể khởi động</h1><p>{loadError}</p><button onClick={() => window.location.reload()}>Thử lại</button></main>;
 
   if (phase === 'menu') {
     return (
@@ -107,7 +110,7 @@ export default function App() {
   const eraLabel = state.activeEra === 'present' ? 'Hiện tại' : '1077 · Tái hiện';
   return (
     <main className={`game-shell era-${state.activeEra}`}>
-      <GameCanvas session={session} />
+      <GameCanvas session={session} assetRegistry={assetRegistry} />
       <header className="game-header">
         <div className="brand-mark"><span>THỌ ĐỨC</span><small>Dấu Ấn Thời Gian</small></div>
         <div className="status-group">

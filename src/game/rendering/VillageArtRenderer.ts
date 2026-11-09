@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
+import type { AssetRegistry } from '../../assets/AssetRegistry';
 import type { EraId, GeographicMap } from '../../shared/types/content';
 
 /** Procedural, original placeholder art; replaceable without changing geographic data. */
-export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, map: GeographicMap, era: EraId): void {
+export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, map: GeographicMap, era: EraId, registry: AssetRegistry): void {
   const historical = era === 'ly_1077';
   const dinh = map.heritage.find((place) => place.id === 'dinh_tho_duc')!.world;
   const texture = scene.add.graphics().lineStyle(2, historical ? 0x776b48 : 0x6b8b54, .18);
@@ -14,9 +15,14 @@ export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.
     ].forEach(([x, y]) => layer.add(scene.add.ellipse(x, y, 150, 85, 0x7a8759, .32).setDepth(y)));
     return;
   }
-  drawCommunalHouse(scene, layer, dinh.x, dinh.y - 75);
-  [[dinh.x - 150, dinh.y - 105], [dinh.x + 135, dinh.y - 115], [dinh.x - 130, dinh.y + 75], [dinh.x + 165, dinh.y + 100], [dinh.x + 55, dinh.y + 135]].forEach(([x, y]) => drawTree(scene, layer, x, y));
-  [[dinh.x - 235, dinh.y + 45], [dinh.x + 245, dinh.y - 5], [dinh.x + 210, dinh.y + 160]].forEach(([x, y]) => drawHouse(scene, layer, x, y));
+  const communalHouse = registry.getHeritage('dinh_tho_duc', era);
+  if (communalHouse) drawCommunalHouse(scene, layer, dinh.x + communalHouse.offset.x, dinh.y + communalHouse.offset.y);
+  if (registry.get('tree-procedural')?.eras.includes(era)) {
+    [[dinh.x - 150, dinh.y - 105], [dinh.x + 135, dinh.y - 115], [dinh.x - 130, dinh.y + 75], [dinh.x + 165, dinh.y + 100], [dinh.x + 55, dinh.y + 135]].forEach(([x, y]) => drawTree(scene, layer, x, y));
+  }
+  if (registry.get('house-procedural')?.eras.includes(era)) {
+    [[dinh.x - 235, dinh.y + 45], [dinh.x + 245, dinh.y - 5], [dinh.x + 210, dinh.y + 160]].forEach(([x, y]) => drawHouse(scene, layer, x, y));
+  }
 }
 
 function drawTree(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, x: number, y: number): void {
