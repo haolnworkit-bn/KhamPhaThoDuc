@@ -8,6 +8,7 @@ import type { MapVisualStyleRegistry } from '../../assets/MapVisualStyleRegistry
 import type { MapVisualStyle } from '../../assets/mapVisualTypes';
 import { NavigationService } from '../../services/NavigationService';
 import { resolveWorldObstacles } from '../../services/WorldObstacleService';
+import { VillageNpcService } from '../../services/VillageNpcService';
 import { renderVillageArt } from '../rendering/VillageArtRenderer';
 
 interface TargetPoint { x: number; y: number; target: InteractionTarget; visual?: Phaser.GameObjects.Container }
@@ -27,6 +28,8 @@ export class VillageScene extends Phaser.Scene {
   private lastPositionSave = 0;
   private renderedEra: EraId | null = null;
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
+  private villageNpcs!: VillageNpcService;
+  private npcVisuals: Array<{ id: string; sprite: Phaser.GameObjects.Sprite; label: Phaser.GameObjects.Text }> = [];
 
   constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
 
@@ -66,6 +69,9 @@ export class VillageScene extends Phaser.Scene {
       this.textures.exists('player-chibi-v1') ? 'down-idle' : undefined,
     );
     this.player.setCircle(15, 9, 26).setCollideWorldBounds(true).setDepth(state.player.y + 12);
+    this.villageNpcs = new VillageNpcService(this.session.content.map.interaction.spawn, this.navigation);
+    this.npcVisuals = [];
+    this.createVillageNpcs();
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setZoom(window.matchMedia('(max-width: 780px)').matches ? 0.82 : 1.05);
 
@@ -133,6 +139,7 @@ export class VillageScene extends Phaser.Scene {
         }
       }
     }
+    this.updateVillageNpcs(delta, era);
     this.updateNearestTarget();
     this.session.updatePlayer(this.player.x, this.player.y);
     if (time - this.lastPositionSave > 1500) { this.session.flushPlayerPosition(); this.lastPositionSave = time; }
@@ -352,6 +359,52 @@ export class VillageScene extends Phaser.Scene {
     }).setOrigin(.5, 0);
     marker.add([art, label]);
     return marker;
+  }
+
+
+  private createVillageNpcs(): void {
+    const sheet = this.textures.exists('player-chibi-v1');
+    this.villageNpcs.snapshot().forEach((npc, index) => {
+      const sprite = this.add.sprite(npc.position.x, npc.position.y,
+        sheet ? 'player-chibi-v1' : 'player-down-idle',
+        sheet ? 'down-idle' : undefined,
+      ).setOrigin(.5, 1).setDepth(npc.position.y + 10)
+        .setTint(index === 0 ? 0xe3caad : 0xc9d9f5);
+      const label = this.add.text(npc.position.x, npc.position.y - 68, npc.label, {
+        fontFamily: '"Be Vietnam Pro", sans-serif',
+        fontSize: '10px',
+        color: '#264839',
+        backgroundColor: '#fff4dc',
+        padding: { x: 4, y: 3 },
+      }).setOrigin(.5).setDepth(npc.position.y + 11);
+      this.npcVisuals.push({ id: npc.id, sprite, label });
+    });
+  }
+
+  private updateVillageNpcs(delta: number, era: EraId): void {
+    this.villageNpcs.update(delta, era);
+    const snapshots = new Map(this.villageNpcs.snapshot().map((npc) => [npc.id, npc]));
+    for (const visual of this.npcVisuals) {
+      const npc = snapshots.get(visual.id);
+      if (!npc) continue;
+      const visible = era === 'present';
+      visual.sprite.setVisible(visible);
+      visual.label.setVisible(visible);
+      if (!visible) continue;
+      visual.sprite.setPosition(npc.position.x, npc.position.y).setDepth(npc.position.y + 10);
+      visual.label.setPosition(npc.position.x, npc.position.y - 68).setDepth(npc.position.y + 11);
+      if (npc.activity === 'walking') {
+        const key = `player-${npc.facing}-walk`;
+        if (visual.sprite.anims.currentAnim?.key !== key) visual.sprite.play(key);
+      } else {
+        visual.sprite.anims.stop();
+        if (this.textures.exists('player-chibi-v1')) {
+          visual.sprite.setTexture('player-chibi-v1', `${npc.facing}-idle`);
+        } else {
+          visual.sprite.setTexture(`player-${npc.facing}-idle`);
+        }
+      }
+    }
   }
 
   private updateNearestTarget(): void {
