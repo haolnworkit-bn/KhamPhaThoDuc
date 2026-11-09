@@ -4,8 +4,9 @@ import type { InteractionTarget } from '../../shared/events/GameEvents';
 import type { GameSession } from '../../services/GameSession';
 import type { AssetRegistry } from '../../assets/AssetRegistry';
 import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegistry';
+import type { MapVisualStyleRegistry } from '../../assets/MapVisualStyleRegistry';
+import type { MapVisualStyle } from '../../assets/mapVisualTypes';
 import { NavigationService } from '../../services/NavigationService';
-import { getEraVisualLayers } from '../../services/MapLayerService';
 import { renderVillageArt } from '../rendering/VillageArtRenderer';
 
 interface TargetPoint { x: number; y: number; target: InteractionTarget; visual?: Phaser.GameObjects.Container }
@@ -26,7 +27,7 @@ export class VillageScene extends Phaser.Scene {
   private renderedEra: EraId | null = null;
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
 
-  constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null) { super('village'); }
+  constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
 
   create(): void {
     const { width, height } = this.session.content.map.projection.world;
@@ -114,23 +115,29 @@ export class VillageScene extends Phaser.Scene {
     this.renderedEra = era;
     this.eraLayer.removeAll(true);
     const historical = era === 'ly_1077';
-    const layers = getEraVisualLayers(this.session.content.map, era);
     const { width, height } = this.session.content.map.projection.world;
     this.eraLayer.add(this.add.rectangle(width / 2, height / 2, width, height, historical ? 0xb8aa78 : 0xb9d49b));
-    if (historical) {
-      this.drawHistoricalReconstruction(width, height);
-      this.drawLines(layers.water, 0x6f8882, 14, undefined, 0.55);
-    } else {
-      this.drawPolygons(layers.landuse, 0x8fbd72, 0.78);
-      this.drawLines(layers.water, 0x65a9b2, 20);
-      this.drawLines(layers.roads, 0xdacaa5, 18, 0x9d9178);
-      this.drawLines(layers.footpaths, 0xeee1bf, 8);
-      this.drawPolygons(layers.buildings, 0x9a624b, 0.95, 0x5e4635);
-    }
+    if (historical) this.drawHistoricalReconstruction(width, height);
+    this.drawMapVisualLayers(era);
     renderVillageArt(this, this.eraLayer, this.session.content.map, era, this.assetRegistry, this.sceneDecorations);
     const label = this.add.text(95, 95, historical ? 'THỌ ĐỨC · TÁI HIỆN DIỄN GIẢI 1077' : 'THỌ ĐỨC · BẢN ĐỒ HIỆN TẠI', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '18px', color: historical ? '#493b2c' : '#173b33', fontStyle: 'bold' });
     const note = historical ? this.add.text(95, 124, 'Không hiển thị đường/công trình hiện đại · Thủy hệ chỉ là mốc tham chiếu hiện nay', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '13px', color: '#584a36', backgroundColor: '#e6d7a8', padding: { x: 8, y: 5 } }) : null;
     this.eraLayer.add(note ? [label, note] : label);
+  }
+
+  private drawMapVisualLayers(era: EraId): void {
+    const groups = new Map<string, { style: MapVisualStyle; features: MapFeature[] }>();
+    this.mapVisualStyles.resolve(this.session.content.map, era).forEach(({ style, feature }) => {
+      const group = groups.get(style.id) ?? { style, features: [] };
+      group.features.push(feature);
+      groups.set(style.id, group);
+    });
+    groups.forEach(({ style, features }) => {
+      const color = Number.parseInt(style.color.slice(1), 16);
+      const outline = style.outlineColor ? Number.parseInt(style.outlineColor.slice(1), 16) : undefined;
+      if (style.paint === 'line') this.drawLines(features, color, style.width!, outline, style.alpha);
+      else this.drawPolygons(features, color, style.alpha, outline ?? color);
+    });
   }
 
   private drawLines(features: MapFeature[], color: number, width: number, outline?: number, alpha = 1): void {

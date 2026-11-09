@@ -4,6 +4,8 @@ import { loadAssetRegistry } from '../assets/loadAssetRegistry';
 import type { AssetRegistry } from '../assets/AssetRegistry';
 import { loadSceneDecorationRegistry } from '../assets/loadSceneDecorationRegistry';
 import type { SceneDecorationRegistry } from '../assets/SceneDecorationRegistry';
+import { loadMapVisualStyleRegistry } from '../assets/loadMapVisualStyleRegistry';
+import type { MapVisualStyleRegistry } from '../assets/MapVisualStyleRegistry';
 import { loadContent } from '../content/loadContent';
 import { GameSession } from '../services/GameSession';
 import { SaveService } from '../services/SaveService';
@@ -22,6 +24,7 @@ export default function App() {
   const [content, setContent] = useState<GameContent | null>(null);
   const [assetRegistry, setAssetRegistry] = useState<AssetRegistry | null>(null);
   const [sceneDecorations, setSceneDecorations] = useState<SceneDecorationRegistry | null>(null);
+  const [mapVisualStyles, setMapVisualStyles] = useState<MapVisualStyleRegistry | null>(null);
   const [decorationWarning, setDecorationWarning] = useState('');
   const [phase, setPhase] = useState<Phase>('loading');
   const [loadError, setLoadError] = useState('');
@@ -34,12 +37,12 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([loadContent(), loadAssetRegistry()])
-      .then(async ([loaded, registry]) => {
+    Promise.all([loadContent(), loadAssetRegistry(), loadMapVisualStyleRegistry()])
+      .then(async ([loaded, registry, visualStyles]) => {
         const decorations = await loadSceneDecorationRegistry(registry)
           .then((value) => ({ value, warning: '' }))
           .catch((error: unknown) => ({ value: null, warning: error instanceof Error ? error.message : 'Unable to load scene decorations.' }));
-        if (active) { setContent(loaded); setAssetRegistry(registry); setSceneDecorations(decorations.value); setDecorationWarning(decorations.warning); setPhase('menu'); }
+        if (active) { setContent(loaded); setAssetRegistry(registry); setSceneDecorations(decorations.value); setMapVisualStyles(visualStyles); setDecorationWarning(decorations.warning); setPhase('menu'); }
       })
       .catch((error: unknown) => { if (active) { setLoadError(error instanceof Error ? error.message : 'Không thể tải dữ liệu trò chơi.'); setPhase('error'); } });
     return () => { active = false; };
@@ -94,7 +97,7 @@ export default function App() {
   };
 
   if (phase === 'loading') return <main className="loading-screen"><div className="loader" /><h1>Đang mở hành trình…</h1><p>Đang tải bản đồ và dữ liệu minh họa</p></main>;
-  if (phase === 'error' || !session || !assetRegistry) return <main className="fatal-error"><h1>Không thể khởi động</h1><p>{loadError}</p><button onClick={() => window.location.reload()}>Thử lại</button></main>;
+  if (phase === 'error' || !session || !assetRegistry || !mapVisualStyles) return <main className="fatal-error"><h1>Không thể khởi động</h1><p>{loadError}</p><button onClick={() => window.location.reload()}>Thử lại</button></main>;
 
   if (phase === 'menu') {
     return (
@@ -120,7 +123,7 @@ export default function App() {
   const eraLabel = state.activeEra === 'present' ? 'Hiện tại' : '1077 · Tái hiện';
   return (
     <main className={`game-shell era-${state.activeEra}`}>
-      <GameCanvas session={session} assetRegistry={assetRegistry} sceneDecorations={sceneDecorations} />
+      <GameCanvas session={session} assetRegistry={assetRegistry} sceneDecorations={sceneDecorations} mapVisualStyles={mapVisualStyles} />
       <header className="game-header">
         <div className="brand-mark"><span>THỌ ĐỨC</span><small>Dấu Ấn Thời Gian</small></div>
         <div className="status-group">
