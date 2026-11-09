@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GameCanvas } from '../game/GameCanvas';
 import { loadAssetRegistry } from '../assets/loadAssetRegistry';
 import type { AssetRegistry } from '../assets/AssetRegistry';
+import { loadSceneDecorationRegistry } from '../assets/loadSceneDecorationRegistry';
+import type { SceneDecorationRegistry } from '../assets/SceneDecorationRegistry';
 import { loadContent } from '../content/loadContent';
 import { GameSession } from '../services/GameSession';
 import { SaveService } from '../services/SaveService';
@@ -19,6 +21,8 @@ type Modal = { type: 'guide'; step: number } | { type: 'location'; location: Her
 export default function App() {
   const [content, setContent] = useState<GameContent | null>(null);
   const [assetRegistry, setAssetRegistry] = useState<AssetRegistry | null>(null);
+  const [sceneDecorations, setSceneDecorations] = useState<SceneDecorationRegistry | null>(null);
+  const [decorationWarning, setDecorationWarning] = useState('');
   const [phase, setPhase] = useState<Phase>('loading');
   const [loadError, setLoadError] = useState('');
   const [state, setState] = useState<GameState>(createInitialState());
@@ -31,7 +35,12 @@ export default function App() {
   useEffect(() => {
     let active = true;
     Promise.all([loadContent(), loadAssetRegistry()])
-      .then(([loaded, registry]) => { if (active) { setContent(loaded); setAssetRegistry(registry); setPhase('menu'); } })
+      .then(async ([loaded, registry]) => {
+        const decorations = await loadSceneDecorationRegistry(registry)
+          .then((value) => ({ value, warning: '' }))
+          .catch((error: unknown) => ({ value: null, warning: error instanceof Error ? error.message : 'Unable to load scene decorations.' }));
+        if (active) { setContent(loaded); setAssetRegistry(registry); setSceneDecorations(decorations.value); setDecorationWarning(decorations.warning); setPhase('menu'); }
+      })
       .catch((error: unknown) => { if (active) { setLoadError(error instanceof Error ? error.message : 'Không thể tải dữ liệu trò chơi.'); setPhase('error'); } });
     return () => { active = false; };
   }, []);
@@ -95,6 +104,7 @@ export default function App() {
           <div className="eyebrow">Một hành trình khám phá quê hương</div>
           <h1>Thọ Đức<br /><span>Dấu Ấn Thời Gian</span></h1>
           <p>Khám phá bản làng minh họa, ghi lại các điểm di sản và bước qua cánh cổng thời gian.</p>
+          {decorationWarning && <small role="status">Trang trí cảnh chưa tải được; game vẫn hoạt động, nhưng không hiển thị cây/nhà minh họa. {decorationWarning}</small>}
           <div className="start-actions">
             <button className="primary-large" onClick={() => begin(false)}>Bắt đầu khám phá</button>
             {session.hasSave() && <button className="button-secondary" onClick={() => begin(true)}>Tiếp tục</button>}
@@ -110,7 +120,7 @@ export default function App() {
   const eraLabel = state.activeEra === 'present' ? 'Hiện tại' : '1077 · Tái hiện';
   return (
     <main className={`game-shell era-${state.activeEra}`}>
-      <GameCanvas session={session} assetRegistry={assetRegistry} />
+      <GameCanvas session={session} assetRegistry={assetRegistry} sceneDecorations={sceneDecorations} />
       <header className="game-header">
         <div className="brand-mark"><span>THỌ ĐỨC</span><small>Dấu Ấn Thời Gian</small></div>
         <div className="status-group">
@@ -135,6 +145,7 @@ export default function App() {
       >⌛ <span>{session.portalUnlocked() ? 'Đổi thời kỳ' : 'Cổng đang khóa'}</span></button>
       {prompt && <button className="interaction-prompt" onClick={() => session.events.command({ type: 'interact' })}><kbd>E</kbd> {prompt}</button>}
       {notice && <div className="toast" role="status">{notice}</div>}
+      {decorationWarning && <div className="toast" role="status">Trang trí cảnh chưa tải được; game vẫn hoạt động, nhưng không hiển thị cây/nhà minh họa.</div>}
       <MobileControls session={session} />
       {modal?.type === 'guide' && <DialoguePanel dialogue={session.content.dialogues[0]} step={modal.step} onNext={nextDialogue} onClose={closeDialogue} />}
       {modal?.type === 'location' && <LocationPanel location={modal.location} visited={state.discoveredLocations.includes(modal.location.id)} onClose={closeModal} />}

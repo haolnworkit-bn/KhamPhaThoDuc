@@ -32,6 +32,14 @@ test('báo lỗi khi không thể tải Asset Registry', async ({ page }) => {
   await expect(page.getByText(/Unable to load visual metadata \(503\)/)).toBeVisible();
 });
 
+test('vẫn bắt đầu được khi không thể tải Scene Decoration Registry', async ({ page }) => {
+  await page.route('**/data/scene-decorations.json', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
+  await page.goto('./');
+  await expect(page.getByRole('status')).toContainText('Trang trí cảnh chưa tải được');
+  await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();
+  await expect(page.locator('canvas')).toBeVisible();
+});
+
 test('minimap chọn điểm đến và hiển thị khoảng cách', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();

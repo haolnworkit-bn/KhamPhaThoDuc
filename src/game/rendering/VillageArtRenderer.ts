@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import type { AssetRegistry } from '../../assets/AssetRegistry';
+import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegistry';
 import type { EraId, GeographicMap } from '../../shared/types/content';
 
 /** Procedural, original placeholder art; replaceable without changing geographic data. */
-export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, map: GeographicMap, era: EraId, registry: AssetRegistry): void {
+export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, map: GeographicMap, era: EraId, registry: AssetRegistry, sceneDecorations: SceneDecorationRegistry | null): void {
   const historical = era === 'ly_1077';
   const dinh = map.heritage.find((place) => place.id === 'dinh_tho_duc')!.world;
   const texture = scene.add.graphics().lineStyle(2, historical ? 0x776b48 : 0x6b8b54, .18);
@@ -17,22 +18,20 @@ export function renderVillageArt(scene: Phaser.Scene, layer: Phaser.GameObjects.
   }
   const communalHouse = registry.getHeritage('dinh_tho_duc', era);
   if (communalHouse) drawCommunalHouse(scene, layer, dinh.x + communalHouse.offset.x, dinh.y + communalHouse.offset.y);
-  if (registry.get('tree-procedural')?.eras.includes(era)) {
-    [[dinh.x - 150, dinh.y - 105], [dinh.x + 135, dinh.y - 115], [dinh.x - 130, dinh.y + 75], [dinh.x + 165, dinh.y + 100], [dinh.x + 55, dinh.y + 135]].forEach(([x, y]) => drawTree(scene, layer, x, y));
-  }
-  if (registry.get('house-procedural')?.eras.includes(era)) {
-    [[dinh.x - 235, dinh.y + 45], [dinh.x + 245, dinh.y - 5], [dinh.x + 210, dinh.y + 160]].forEach(([x, y]) => drawHouse(scene, layer, x, y));
-  }
+  sceneDecorations?.resolve(map, era).forEach((decoration) => {
+    if (decoration.assetId === 'tree-procedural') drawTree(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+    if (decoration.assetId === 'house-procedural') drawHouse(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
+  });
 }
 
-function drawTree(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, x: number, y: number): void {
-  const tree = scene.add.container(x, y).setDepth(y + 8);
+function drawTree(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, x: number, y: number, scale = 1, depthOffset = 0): void {
+  const tree = scene.add.container(x, y).setDepth(y + 8 + depthOffset).setScale(scale);
   tree.add([scene.add.ellipse(4, 19, 42, 14, 0x294c38, .22), scene.add.rectangle(0, 5, 10, 25, 0x744e32), scene.add.circle(-8, -10, 24, 0x2f7049), scene.add.circle(10, -8, 22, 0x376f46), scene.add.circle(1, -25, 20, 0x4d8c54)]);
   layer.add(tree);
 }
 
-function drawHouse(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, x: number, y: number): void {
-  const house = scene.add.container(x, y).setDepth(y);
+function drawHouse(scene: Phaser.Scene, layer: Phaser.GameObjects.Container, x: number, y: number, scale = 1, depthOffset = 0): void {
+  const house = scene.add.container(x, y).setDepth(y + depthOffset).setScale(scale);
   house.add([scene.add.ellipse(5, 21, 82, 18, 0x273e30, .2), scene.add.rectangle(0, 0, 62, 35, 0xd6ba8b), scene.add.triangle(0, -26, -42, 0, 42, 0, 0, -27, 0xaa493b), scene.add.rectangle(0, 10, 13, 22, 0x69452f)]);
   layer.add(house);
 }

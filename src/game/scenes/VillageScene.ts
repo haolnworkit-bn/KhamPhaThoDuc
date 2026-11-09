@@ -3,6 +3,7 @@ import type { EraId, MapFeature } from '../../shared/types/content';
 import type { InteractionTarget } from '../../shared/events/GameEvents';
 import type { GameSession } from '../../services/GameSession';
 import type { AssetRegistry } from '../../assets/AssetRegistry';
+import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegistry';
 import { NavigationService } from '../../services/NavigationService';
 import { getEraVisualLayers } from '../../services/MapLayerService';
 import { renderVillageArt } from '../rendering/VillageArtRenderer';
@@ -25,7 +26,7 @@ export class VillageScene extends Phaser.Scene {
   private renderedEra: EraId | null = null;
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
 
-  constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry) { super('village'); }
+  constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null) { super('village'); }
 
   create(): void {
     const { width, height } = this.session.content.map.projection.world;
@@ -126,7 +127,7 @@ export class VillageScene extends Phaser.Scene {
       this.drawLines(layers.footpaths, 0xeee1bf, 8);
       this.drawPolygons(layers.buildings, 0x9a624b, 0.95, 0x5e4635);
     }
-    renderVillageArt(this, this.eraLayer, this.session.content.map, era, this.assetRegistry);
+    renderVillageArt(this, this.eraLayer, this.session.content.map, era, this.assetRegistry, this.sceneDecorations);
     const label = this.add.text(95, 95, historical ? 'THỌ ĐỨC · TÁI HIỆN DIỄN GIẢI 1077' : 'THỌ ĐỨC · BẢN ĐỒ HIỆN TẠI', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '18px', color: historical ? '#493b2c' : '#173b33', fontStyle: 'bold' });
     const note = historical ? this.add.text(95, 124, 'Không hiển thị đường/công trình hiện đại · Thủy hệ chỉ là mốc tham chiếu hiện nay', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '13px', color: '#584a36', backgroundColor: '#e6d7a8', padding: { x: 8, y: 5 } }) : null;
     this.eraLayer.add(note ? [label, note] : label);

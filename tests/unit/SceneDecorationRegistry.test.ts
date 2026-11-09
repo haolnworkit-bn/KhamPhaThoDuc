@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { SceneDecorationRegistry } from '../../src/assets/SceneDecorationRegistry';
 import { validateSceneDecorations } from '../../src/assets/validateSceneDecorations';
+import type { SceneDecorationManifest } from '../../src/assets/sceneDecorationTypes';
 import type { AssetManifest } from '../../src/assets/types';
 import type { GeographicMap } from '../../src/shared/types/content';
 import assetJson from '../../public/data/asset-manifest.json';
 import decorationJson from '../../public/data/scene-decorations.json';
 
 const assets = assetJson as unknown as AssetManifest;
-const createManifest = () => JSON.parse(JSON.stringify(decorationJson)) as typeof decorationJson;
+const createManifest = () => JSON.parse(JSON.stringify(decorationJson)) as SceneDecorationManifest;
 const map = {
   mapId: 'tho_duc_geographic_v1',
   heritage: [{ id: 'dinh_tho_duc', world: { x: 519.09, y: 1015.61 } }],
