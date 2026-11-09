@@ -47,7 +47,7 @@ export class VillageScene extends Phaser.Scene {
 
     const state = this.session.snapshot();
     this.player = this.physics.add.sprite(state.player.x, state.player.y, 'player-down-idle');
-    this.player.setCircle(15, 3, 10).setCollideWorldBounds(true).setDepth(state.player.y + 12);
+    this.player.setCircle(15, 9, 26).setCollideWorldBounds(true).setDepth(state.player.y + 12);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setZoom(window.matchMedia('(max-width: 780px)').matches ? 0.82 : 1.05);
 
@@ -103,13 +103,56 @@ export class VillageScene extends Phaser.Scene {
   private createTextures(): void {
     if (this.textures.exists('player-down-idle')) return;
     const graphics = this.make.graphics({ x: 0, y: 0 }, false);
-    (['up', 'down', 'left', 'right'] as const).forEach((direction, index) => {
-      const accent = [0xe9b44c, 0xf7f0d5, 0x5c8eb5, 0xb56555][index];
-      graphics.clear().fillStyle(0x203f36).fillEllipse(18, 19, 26, 29).fillStyle(0xf2c879).fillCircle(18, 11, 8).fillStyle(accent).fillRoundedRect(7, 23, 22, 18, 6).generateTexture(`player-${direction}-idle`, 36, 44);
-      ['a', 'b'].forEach((frame, frameIndex) => {
-        graphics.clear().fillStyle(0x203f36).fillEllipse(18, 18 + frameIndex, 26, 29).fillStyle(0xf2c879).fillCircle(18, 10 + frameIndex, 8).fillStyle(accent).fillRoundedRect(7, 22 + frameIndex, 22, 18, 6).fillStyle(0x513d31).fillRect(frameIndex ? 4 : 7, 39, 9, 4).fillRect(frameIndex ? 23 : 20, 39, 9, 4).generateTexture(`player-${direction}-walk-${frame}`, 36, 44);
+    // Same costume in each direction; feet and outline stay aligned between frames.
+    // All art is original, fictional chibi illustration and does not claim historic dress.
+    const drawFrame = (direction: 'up' | 'down' | 'left' | 'right', stride: number): void => {
+      graphics.clear();
+      const step = stride === 0 ? 0 : stride === 1 ? -3 : 3;
+      graphics.fillStyle(0x192d28, 0.22).fillEllipse(24, 55, 30, 8);
+      // Arms and alternating legs sit behind the tunic.
+      graphics.fillStyle(0x594136).fillRoundedRect(16 + step, 45, 8, 12, 3);
+      graphics.fillRoundedRect(26 - step, 45, 8, 12, 3);
+      graphics.fillStyle(0x293f39).fillRoundedRect(14 + step, 53, 12, 5, 2);
+      graphics.fillRoundedRect(25 - step, 53, 12, 5, 2);
+      graphics.fillStyle(0xe2ad79).fillCircle(10, 35 - step / 2, 6);
+      graphics.fillCircle(38, 35 + step / 2, 6);
+      graphics.fillStyle(0x355f51).fillRoundedRect(10, 29, 28, 23, 8);
+      graphics.fillStyle(0x5f9880).fillRoundedRect(14, 32, 20, 15, 6);
+      graphics.fillStyle(0xd6b176).fillRect(22, 33, 4, 18);
+      graphics.fillStyle(0x9e513e).fillRoundedRect(13, 48, 22, 5, 2);
+      // Distinctive wide chibi head and dark hair fringe.
+      graphics.fillStyle(0x49342c).fillEllipse(24, 17, 34, 30);
+      graphics.fillStyle(0xf1bd86).fillEllipse(24, 20, 29, 25);
+      graphics.fillStyle(0x4b342b).fillEllipse(24, 11, 33, 18);
+      graphics.fillStyle(0x654334).fillEllipse(24, 7, 18, 8);
+      if (direction === 'down') {
+        graphics.fillStyle(0x322923).fillCircle(17, 23, 2.4);
+        graphics.fillCircle(31, 23, 2.4);
+        graphics.lineStyle(1.5, 0x9e624f).lineBetween(21, 29, 27, 29);
+        graphics.fillStyle(0xdf8c79, 0.5).fillCircle(12, 27, 3.5);
+        graphics.fillCircle(36, 27, 3.5);
+      } else if (direction === 'up') {
+        graphics.fillStyle(0x48332b).fillEllipse(24, 19, 28, 21);
+        graphics.fillStyle(0x80604a).fillEllipse(24, 17, 16, 13);
+      } else {
+        const eye = direction === 'left' ? 16 : 32;
+        graphics.fillStyle(0x362b26).fillCircle(eye, 23, 2.5);
+        graphics.fillStyle(0xb16c51).fillCircle(direction === 'left' ? 10 : 38, 26, 2.5);
+      }
+    };
+    (['down', 'left', 'right', 'up'] as const).forEach((direction) => {
+      drawFrame(direction, 0);
+      graphics.generateTexture(`player-${direction}-idle`, 48, 60);
+      (['a', 'b'] as const).forEach((frame, index) => {
+        drawFrame(direction, index + 1);
+        graphics.generateTexture(`player-${direction}-walk-${frame}`, 48, 60);
       });
-      this.anims.create({ key: `player-${direction}-walk`, frames: [{ key: `player-${direction}-walk-a` }, { key: `player-${direction}-walk-b` }], frameRate: 7, repeat: -1 });
+      this.anims.create({
+        key: `player-${direction}-walk`,
+        frames: [{ key: `player-${direction}-walk-a` }, { key: `player-${direction}-walk-b` }],
+        frameRate: 7,
+        repeat: -1,
+      });
     });
     graphics.destroy();
   }
@@ -183,8 +226,30 @@ export class VillageScene extends Phaser.Scene {
   }
 
   private createGuide(x: number, y: number): Phaser.GameObjects.Container {
+    // Fictional guide character: a readable world sprite, not a historical portrait.
     const guide = this.add.container(x, y).setDepth(y + 15);
-    guide.add([this.add.ellipse(3, 18, 38, 12, 0x253d31, .2), this.add.rectangle(0, 4, 22, 27, 0x9a5d44), this.add.circle(0, -12, 10, 0xf1bd80), this.add.triangle(0, -27, -14, 5, 14, 5, 0, -12, 0x365c4d), this.add.text(0, 28, 'NGƯỜI DẪN CHUYỆN', { fontFamily: '"Be Vietnam Pro", sans-serif', fontSize: '11px', color: '#173b33', backgroundColor: '#fff7e5', padding: { x: 5, y: 3 } }).setOrigin(.5)]);
+    const art = this.add.graphics();
+    art.fillStyle(0x1f3529, .24).fillEllipse(2, 18, 43, 12);
+    art.fillStyle(0x543c32).fillRoundedRect(-14, 5, 11, 17, 4);
+    art.fillRoundedRect(5, 5, 11, 17, 4);
+    art.fillStyle(0xe6b482).fillCircle(-21, -10, 6);
+    art.fillCircle(21, -10, 6);
+    art.fillStyle(0x81583e).fillRoundedRect(-21, -14, 42, 30, 10);
+    art.fillStyle(0xd0a16d).fillRoundedRect(-14, -10, 28, 20, 6);
+    art.fillStyle(0xf0be8d).fillEllipse(0, -29, 36, 31);
+    art.fillStyle(0x493528).fillEllipse(0, -42, 43, 20);
+    art.fillStyle(0x5f4631).fillRoundedRect(-25, -46, 50, 7, 3);
+    art.fillStyle(0x332a25).fillCircle(-8, -28, 2.3);
+    art.fillCircle(8, -28, 2.3);
+    art.lineStyle(1.5, 0x945c48).lineBetween(-4, -22, 4, -22);
+    const name = this.add.text(0, 30, 'NGƯỜI DẪN CHUYỆN', {
+      fontFamily: '"Be Vietnam Pro", sans-serif,
+      fontSize: '11px',
+      color: '#173b33',
+      backgroundColor: '#fff7e5',
+      padding: { x: 5, y: 3 },
+    }).setOrigin(.5);
+    guide.add([art, name]);
     return guide;
   }
 
