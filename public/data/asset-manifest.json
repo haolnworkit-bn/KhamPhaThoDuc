@@ -107,6 +107,54 @@
       ],
       "attribution": "Original location marker; not a verified depiction",
       "license": "Project-owned placeholder"
+    },
+    {
+      "id": "tree-v1",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/environment/tree-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.87
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original stylized village SVG created for KhamPhaThoDuc; illustrative tree, not a mapped geographic feature",
+      "license": "Project-owned original"
+    },
+    {
+      "id": "house-v1",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/environment/house-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original stylized village SVG created for KhamPhaThoDuc; fictional house",
+      "license": "Project-owned original"
+    },
+    {
+      "id": "dinh-tho-duc-v1",
+      "category": "heritage",
+      "kind": "image",
+      "path": "assets/heritage/dinh-tho-duc-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original stylized illustrative heritage SVG created for KhamPhaThoDuc, not a surveyed architectural reconstruction",
+      "license": "Project-owned original"
     }
   ],
   "animations": []
