@@ -1,0 +1,47 @@
+[
+  {
+    "locationId": "dinh_tho_duc",
+    "assetId": "dinh-tho-duc-illustration",
+    "label": "Đình Thọ Đức · Minh họa",
+    "representation": "illustration",
+    "verificationStatus": "provisional",
+    "note": "Công trình cách điệu, chưa đối chiếu ảnh thực địa; không biểu diễn diện mạo năm 1077.",
+    "offset": {
+      "x": 0,
+      "y": -75
+    },
+    "eras": [
+      "present"
+    ]
+  },
+  {
+    "locationId": "den_can_vang",
+    "assetId": "den-can-vang-marker",
+    "label": "Đền Can Vang · Vị trí tạm xác định",
+    "representation": "illustration",
+    "verificationStatus": "provisional",
+    "note": "Chỉ là marker, chưa có tư liệu xác minh kiến trúc.",
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "eras": [
+      "present"
+    ]
+  },
+  {
+    "locationId": "chua_thap_linh",
+    "assetId": "chua-thap-linh-marker",
+    "label": "Chùa Tháp Linh · Vị trí tạm xác định",
+    "representation": "illustration",
+    "verificationStatus": "provisional",
+    "note": "Marker vị trí chưa xác minh; tên gọi cần đối chiếu nguồn thực địa.",
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "eras": [
+      "present"
+    ]
+  }
+]

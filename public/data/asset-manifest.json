@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "id": "player-procedural",
+      "category": "character",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "attribution": "Original procedural placeholder in project",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "guide-procedural",
+      "category": "character",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "attribution": "Original procedural placeholder in project",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "tree-procedural",
+      "category": "environment",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original procedural placeholder in project",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "house-procedural",
+      "category": "environment",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original procedural placeholder in project",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "dinh-tho-duc-illustration",
+      "category": "heritage",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original illustrative communal house placeholder; not a verified depiction",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "den-can-vang-marker",
+      "category": "heritage",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original location marker; not a verified depiction",
+      "license": "Project-owned placeholder"
+    },
+    {
+      "id": "chua-thap-linh-marker",
+      "category": "heritage",
+      "kind": "procedural",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original location marker; not a verified depiction",
+      "license": "Project-owned placeholder"
+    }
+  ],
+  "animations": []
+}
