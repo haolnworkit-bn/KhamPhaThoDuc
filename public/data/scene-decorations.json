@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "mapId": "tho_duc_geographic_v1",
+  "decorations": [
+    {
+      "id": "dinh-tree-01",
+      "assetId": "tree-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": -150,
+        "y": -105
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-tree-02",
+      "assetId": "tree-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": 135,
+        "y": -115
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-tree-03",
+      "assetId": "tree-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": -130,
+        "y": 75
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-tree-04",
+      "assetId": "tree-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": 165,
+        "y": 100
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-tree-05",
+      "assetId": "tree-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": 55,
+        "y": 135
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-house-06",
+      "assetId": "house-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": -235,
+        "y": 45
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-house-07",
+      "assetId": "house-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": 245,
+        "y": -5
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    },
+    {
+      "id": "dinh-house-08",
+      "assetId": "house-procedural",
+      "anchor": {
+        "type": "heritage",
+        "locationId": "dinh_tho_duc"
+      },
+      "offset": {
+        "x": 210,
+        "y": 160
+      },
+      "eras": [
+        "present"
+      ],
+      "depthOffset": 0,
+      "scale": 1
+    }
+  ]
+}
