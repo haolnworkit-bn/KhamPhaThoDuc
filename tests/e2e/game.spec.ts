@@ -59,6 +59,18 @@ test('tải artwork SVG gốc và vẫn chơi được khi một ảnh trang tr�
   await expect(page.getByRole('button', { name: /Nhật ký/ })).toBeVisible();
 });
 
+test('nhân vật SVG có thể lỗi tải mà game vẫn khởi động được', async ({ page }) => {
+  await page.route('**/assets/characters/player-chibi-v1.svg', (route) =>
+    route.fulfill({ status: 503, contentType: 'image/svg+xml', body: '' }));
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();
+  await expect(page.locator('canvas')).toBeVisible();
+  await page.keyboard.down('ArrowRight');
+  await page.waitForTimeout(220);
+  await page.keyboard.up('ArrowRight');
+  await expect(page.getByRole('button', { name: /Nhật ký/ })).toBeVisible();
+});
+
 test('báo lỗi khi không thể tải Asset Registry', async ({ page }) => {
   await page.route('**/data/asset-manifest.json', (route) => route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }));
   await page.goto('./');

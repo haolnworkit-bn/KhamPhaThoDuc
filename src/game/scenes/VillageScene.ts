@@ -56,7 +56,11 @@ export class VillageScene extends Phaser.Scene {
     this.createTargets();
 
     const state = this.session.snapshot();
-    this.player = this.physics.add.sprite(state.player.x, state.player.y, 'player-down-idle');
+    this.player = this.physics.add.sprite(
+      state.player.x, state.player.y,
+      this.textures.exists('player-chibi-v1') ? 'player-chibi-v1' : 'player-down-idle',
+      this.textures.exists('player-chibi-v1') ? 'down-idle' : undefined,
+    );
     this.player.setCircle(15, 9, 26).setCollideWorldBounds(true).setDepth(state.player.y + 12);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setZoom(window.matchMedia('(max-width: 780px)').matches ? 0.82 : 1.05);
@@ -100,7 +104,11 @@ export class VillageScene extends Phaser.Scene {
       if (this.player.anims.currentAnim?.key !== animation) this.player.play(animation);
     } else {
       this.player.anims.stop();
-      this.player.setTexture(`player-${this.facing}-idle`);
+      if (this.textures.exists('player-chibi-v1')) {
+        this.player.setTexture('player-chibi-v1', `${this.facing}-idle`);
+      } else {
+        this.player.setTexture(`player-${this.facing}-idle`);
+      }
     }
     const next = { x: this.player.x + this.vector.x * delta / 1000, y: this.player.y + this.vector.y * delta / 1000 };
     const era = this.session.snapshot().activeEra;
@@ -111,6 +119,30 @@ export class VillageScene extends Phaser.Scene {
   }
 
   private createTextures(): void {
+    if (this.textures.exists('player-chibi-v1')) {
+      // Twelve cells in one SVG texture: down, left, right, up; idle, walk-a, walk-b.
+      // Existing physics and gameplay remain unchanged; only visual frame sources differ.
+      const sheet = this.textures.get('player-chibi-v1');
+      (['down', 'left', 'right', 'up'] as const).forEach((direction, row) => {
+        (['idle', 'walk-a', 'walk-b'] as const).forEach((pose, column) => {
+          const key = `${direction}-${pose}`;
+          if (!sheet.has(key)) sheet.add(key, 0, (row * 3 + column) * 48, 0, 48, 60);
+        });
+        const animKey = `player-${direction}-walk`;
+        if (!this.anims.exists(animKey)) {
+          this.anims.create({
+            key: animKey,
+            frames: [
+              { key: 'player-chibi-v1', frame: `${direction}-walk-a` },
+              { key: 'player-chibi-v1', frame: `${direction}-walk-b` },
+            ],
+            frameRate: 7,
+            repeat: -1,
+          });
+        }
+      });
+      return;
+    }
     if (this.textures.exists('player-down-idle')) return;
     const graphics = this.make.graphics({ x: 0, y: 0 }, false);
     // Same costume in each direction; feet and outline stay aligned between frames.
