@@ -28,9 +28,11 @@ export function resolveWorldObstacles(
       id: 'dinh-tho-duc-walls',
       kind: 'rect',
       x: dinh.world.x + visual.offset.x,
-      y: dinh.world.y + visual.offset.y - 50,
+      // SVG wall body spans roughly y=119..222 on a 350px image centered at offset.
+      // This blocks the actual facade, while leaving the lower courtyard walkable.
+      y: dinh.world.y + visual.offset.y - 6,
       halfWidth: 105,
-      halfHeight: 40,
+      halfHeight: 45,
     });
   }
 
@@ -49,9 +51,9 @@ export function resolveWorldObstacles(
         id: object.id,
         kind: 'rect',
         x: object.world.x,
-        y: object.world.y - 19 * scale,
+        y: object.world.y - 32 * scale,
         halfWidth: 33 * scale,
-        halfHeight: 23 * scale,
+        halfHeight: 29 * scale,
       });
     }
   }
