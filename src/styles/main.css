@@ -154,3 +154,29 @@ button { min-height: 46px; border-radius: 999px; padding: .75rem 1.2rem; backgro
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+/* Sprint 04: source-backed cultural discovery. Content is intentionally readable on mobile. */
+.cultural-panel { width: min(780px, 100%); }
+.cultural-panel h3 { color: #71412f; font-size: 1.28rem; margin: .45rem 0 .65rem; }
+.cultural-progress { padding: .9rem 1rem; border-radius: 12px; background: #e4ead8; display: grid; gap: .55rem; }
+.cultural-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; margin: 1rem 0; }
+.cultural-tabs button { min-height: 54px; font-size: .85rem; text-align: left; border-radius: 12px; background: #eee6d1; color: #284337; box-shadow: none; border: 2px solid #ddd0b4; }
+.cultural-tabs button.selected { border-color: #a2523a; background: #f8eed7; }
+.cultural-clue { padding: 1rem; border: 1px solid #d5c6a6; border-radius: 14px; background: #fcf4e3; }
+.cultural-clue p { margin: .5rem 0 1rem; }
+.cultural-choices { display: grid; gap: .55rem; }
+.cultural-choices button { width: 100%; min-height: 48px; text-align: left; color: #284337; background: #f2e9d4; box-shadow: none; border: 2px solid #d8c8a5; border-radius: 10px; }
+.cultural-choices button.correct { border-color: #54875c; background: #daebd2; }
+.cultural-choices button:disabled { cursor: default; opacity: .85; }
+.cultural-locked { padding: 1rem; border-radius: 10px; background: #ede6d4; color: #715f4d; }
+.cultural-feedback { color: #863c2e; font-weight: 700; }
+.cultural-reveal { margin-top: .85rem; padding: .9rem 1rem; background: #e5f0d9; border-left: 4px solid #679356; border-radius: 8px; }
+.cultural-reveal p { margin: .4rem 0 .65rem; }
+.cultural-reveal a { color: #385c69; overflow-wrap: anywhere; text-decoration: underline; }
+@media (max-width: 560px) {
+  .cultural-tabs { grid-template-columns: 1fr; }
+  .cultural-panel { padding: 1.1rem; }
+  .game-header .status-group { gap: .35rem; }
+  .game-header .icon-button { font-size: .7rem; padding: .5rem .55rem; }
+}

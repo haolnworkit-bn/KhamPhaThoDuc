@@ -210,3 +210,33 @@ test('giao diện bản đồ và điều khiển vừa màn hình điện tho�
   expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width);
   expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height);
 });
+
+
+test('giải mã văn hóa Thọ Đức chỉ mở sau khám phá và lưu thẻ kiến thức', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Bắt đầu khám phá' }).click();
+  await page.getByRole('button', { name: 'Giải mã quê hương' }).click();
+  await expect(page.getByRole('heading', { name: 'Giải mã Thọ Đức' })).toBeVisible();
+  await expect(page.getByText('0/4 thẻ kiến thức')).toBeVisible();
+  await expect(page.getByText(/Hãy trò chuyện với Người dẫn chuyện/)).toBeVisible();
+  await page.getByRole('button', { name: 'Quay lại khám phá' }).click();
+
+  await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), {
+    key: saveKey, value: makeSave(),
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Tiếp tục' }).click();
+  await page.getByRole('button', { name: 'Giải mã quê hương' }).click();
+  await page.getByRole('button', { name: 'Làng Quả Cảm' }).click();
+  await expect(page.getByText(/Chưa chính xác/)).toBeVisible();
+  await expect(page.getByText('0/4 thẻ kiến thức')).toBeVisible();
+  await page.getByRole('button', { name: 'Làng Triền' }).click();
+  await expect(page.getByText(/Đã giải mã manh mối/)).toBeVisible();
+  await expect(page.getByText('1/4 thẻ kiến thức')).toBeVisible();
+  await expect(page.getByRole('link', { name: /Đọc tư liệu gốc/ })).toHaveAttribute('href', /^https:\/\//);
+  await page.getByRole('button', { name: 'Quay lại khám phá' }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Tiếp tục' }).click();
+  await page.getByRole('button', { name: 'Giải mã quê hương' }).click();
+  await expect(page.getByText('1/4 thẻ kiến thức')).toBeVisible();
+});
