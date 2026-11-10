@@ -5,9 +5,22 @@
     "fictional": true,
     "questTrigger": "guide_spoken",
     "steps": [
-      { "speaker": "Người dẫn chuyện", "text": "Chào bạn! Tôi là nhân vật hư cấu đồng hành trong bản demo này." },
-      { "speaker": "Người dẫn chuyện", "text": "Hãy ghé thăm ba điểm đánh dấu. Mọi vị trí trên bản đồ đều chỉ là minh họa kỹ thuật." },
-      { "speaker": "Người dẫn chuyện", "text": "Khi đã khám phá đủ, cổng thời gian sẽ mở để bạn xem một không gian tái hiện minh họa." }
+      {
+        "speaker": "Người dẫn chuyện",
+        "text": "Chào bạn! Thọ Đức không chỉ có những công trình cổ. Mỗi tên gọi, bến sông và câu chuyện lễ hội đều là một mảnh ký ức quê nhà."
+      },
+      {
+        "speaker": "Người dẫn chuyện",
+        "text": "Bạn có biết trước đây Thọ Đức còn được gọi là làng Triền? Hãy mở mục «Giải mã quê hương» và tìm manh mối đầu tiên. Thông tin này được dẫn từ bài giới thiệu của xã Tam Đa."
+      },
+      {
+        "speaker": "Người dẫn chuyện",
+        "text": "Hãy lần lượt tìm Đền Can Vang, Đình Thọ Đức và Chùa Tháp Linh. Mỗi địa điểm sẽ mở thêm một câu hỏi về sông Như Nguyệt, di sản hoặc lễ hội."
+      },
+      {
+        "speaker": "Người dẫn chuyện",
+        "text": "Cùng ghép bốn thẻ kiến thức nhé! Năm 1077 là một lớp diễn giải lịch sử; chúng ta sẽ phân biệt điều có nguồn với những hình ảnh ước lệ."
+      }
     ]
   }
 ]
