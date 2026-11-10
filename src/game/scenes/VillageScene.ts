@@ -276,6 +276,17 @@ export class VillageScene extends Phaser.Scene {
   private createGuide(x: number, y: number): Phaser.GameObjects.Container {
     // Fictional guide character: a readable world sprite, not a historical portrait.
     const guide = this.add.container(x, y).setDepth(y + 15);
+    if (this.textures.exists('guide-v2')) {
+      guide.add(this.add.image(0, 20, 'guide-v2').setOrigin(.5, 1).setScale(.57));
+      guide.add(this.add.text(0, 30, 'NGƯỜI DẪN CHUYỆN', {
+        fontFamily: '"Be Vietnam Pro", sans-serif',
+        fontSize: '11px',
+        color: '#173b33',
+        backgroundColor: '#fff7e5',
+        padding: { x: 5, y: 3 },
+      }).setOrigin(.5));
+      return guide;
+    }
     const art = this.add.graphics();
     art.fillStyle(0x1f3529, .24).fillEllipse(2, 18, 43, 12);
     art.fillStyle(0x543c32).fillRoundedRect(-14, 5, 11, 17, 4);

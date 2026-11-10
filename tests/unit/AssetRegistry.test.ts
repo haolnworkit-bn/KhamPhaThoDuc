@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AssetRegistry } from '../../src/assets/AssetRegistry';
 import { loadAssetRegistry } from '../../src/assets/loadAssetRegistry';
@@ -27,6 +29,25 @@ describe('Visual Asset Foundation', () => {
     ] };
     expect(validateAssetManifest(bad).join(' ')).toContain('Duplicate asset');
     expect(validateAssetManifest(bad).join(' ')).toContain('Invalid local asset path');
+  });
+  it('registers local v2 SVG assets with safe metadata and era filtering', () => {
+    const registry = new AssetRegistry(manifest, visuals);
+    const required = ['player-v2', 'guide-v2', 'tree-v2', 'house-v2', 'dinh-tho-duc-v2'];
+    for (const id of required) {
+      const asset = registry.get(id);
+      expect(asset, id).toBeDefined();
+      expect(asset?.kind).toBe('image');
+      expect(asset?.path).toMatch(/^assets\/visual\/[a-z0-9-]+\.svg$/);
+      const svg = readFileSync(resolve('public', asset!.path!), 'utf-8');
+      expect(svg).toContain('<svg');
+      expect(svg).toContain('viewBox=');
+      expect(svg).not.toMatch(/<script\b/i);
+      expect(svg).not.toMatch(/<foreignObject\b/i);
+      expect(AssetRegistry.assetUrl(asset!, '/ThoDucQueToi/')).toBe('/ThoDucQueToi/' + asset!.path);
+    }
+    expect(registry.available('ly_1077').some(asset => asset.id === 'dinh-tho-duc-v2')).toBe(false);
+    expect(registry.available('ly_1077').some(asset => asset.id === 'tree-v2')).toBe(false);
+    expect(registry.available('ly_1077').some(asset => asset.id === 'guide-v2')).toBe(true);
   });
   it('builds base-path-safe URLs', () => {
     expect(AssetRegistry.assetUrl({ ...manifest.assets[0], path: 'art/player.png' }, '/KhamPhaThoDuc/')).toBe('/KhamPhaThoDuc/art/player.png');

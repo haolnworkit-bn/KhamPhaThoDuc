@@ -38,18 +38,21 @@ export function renderVillageArt(
   if (communalHouse) {
     const x = dinh.x + communalHouse.offset.x;
     const y = dinh.y + communalHouse.offset.y;
-    if (!drawImageAsset(scene, layer, registry, 'dinh-tho-duc-v1', era, x, y, 1, 0)) {
+    if (!drawImageAsset(scene, layer, registry, 'dinh-tho-duc-v2', era, x, y + 123, .9, -123) &&
+        !drawImageAsset(scene, layer, registry, 'dinh-tho-duc-v1', era, x, y, 1, 0)) {
       drawCommunalHouse(scene, layer, x, y);
     }
   }
   sceneDecorations?.resolve(map, era).forEach((decoration) => {
     if (decoration.assetId === 'tree-procedural') {
-      if (!drawImageAsset(scene, layer, registry, 'tree-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
+      if (!drawImageAsset(scene, layer, registry, 'tree-v2', era, decoration.world.x, decoration.world.y + 18, .63 * (decoration.scale ?? 1), (decoration.depthOffset ?? 0) - 18) &&
+          !drawImageAsset(scene, layer, registry, 'tree-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
         drawTree(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
       }
     }
     if (decoration.assetId === 'house-procedural') {
-      if (!drawImageAsset(scene, layer, registry, 'house-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
+      if (!drawImageAsset(scene, layer, registry, 'house-v2', era, decoration.world.x, decoration.world.y + 19, .63 * (decoration.scale ?? 1), (decoration.depthOffset ?? 0) - 19) &&
+          !drawImageAsset(scene, layer, registry, 'house-v1', era, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset)) {
         drawHouse(scene, layer, decoration.world.x, decoration.world.y, decoration.scale, decoration.depthOffset);
       }
     }
