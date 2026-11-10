@@ -254,6 +254,22 @@
       ],
       "attribution": "Original illustrated SVG art created for this project; fictional representation",
       "license": "Project-owned original illustration"
+    },
+    {
+      "id": "player-ly1077-v1",
+      "category": "character",
+      "kind": "image",
+      "path": "assets/characters/player-ly1077-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "ly_1077"
+      ],
+      "attribution": "Original interpretive fictional traveler costume for 1077; not a verified historic garment",
+      "license": "Project-owned original"
     }
   ],
   "animations": []
