@@ -270,6 +270,54 @@
       ],
       "attribution": "Original interpretive fictional traveler costume for 1077; not a verified historic garment",
       "license": "Project-owned original"
+    },
+    {
+      "id": "house-ly1077-v1",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/visual/house-ly1077-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "ly_1077"
+      ],
+      "attribution": "Original historical interpretation, not a verified 1077 reconstruction",
+      "license": "Project-owned original"
+    },
+    {
+      "id": "rice-field-ly1077-v1",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/visual/rice-field-ly1077-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "ly_1077"
+      ],
+      "attribution": "Original historical interpretation, not a verified 1077 reconstruction",
+      "license": "Project-owned original"
+    },
+    {
+      "id": "guide-ly1077-v1",
+      "category": "character",
+      "kind": "image",
+      "path": "assets/visual/guide-ly1077-v1.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "ly_1077"
+      ],
+      "attribution": "Original historical interpretation, not a verified 1077 reconstruction",
+      "license": "Project-owned original"
     }
   ],
   "animations": []
