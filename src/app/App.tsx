@@ -74,6 +74,9 @@ export default function App() {
 
   const begin = (resume: boolean) => {
     if (!session) return;
+    if (!resume) {
+      try { window.localStorage.removeItem(CULTURAL_STORAGE_KEY); } catch { /* Private mode fallback. */ }
+    }
     session.start(resume);
     setState(session.snapshot());
     setPhase('game');
