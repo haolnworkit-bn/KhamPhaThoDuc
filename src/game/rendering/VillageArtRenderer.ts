@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { AssetRegistry } from '../../assets/AssetRegistry';
 import type { SceneDecorationRegistry } from '../../assets/SceneDecorationRegistry';
 import type { EraId, GeographicMap } from '../../shared/types/content';
+import { renderHistoricalVillage } from './HistoricalVillageRenderer';
 
 /**
  * Original, stylized 2.5D village illustrations.
@@ -25,12 +26,7 @@ export function renderVillageArt(
   layer.add(texture);
 
   if (historical) {
-    // Deliberately abstract. Modern scenery is never shown as authentic 1077 architecture.
-    [
-      [dinh.x - 105, dinh.y - 80],
-      [dinh.x + 110, dinh.y - 120],
-      [dinh.x + 145, dinh.y + 90],
-    ].forEach(([x, y]) => layer.add(scene.add.ellipse(x, y, 150, 85, 0x7a8759, .32).setDepth(y)));
+    renderHistoricalVillage(scene, layer, map, registry);
     return;
   }
 
