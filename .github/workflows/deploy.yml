@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
@@ -41,6 +43,8 @@ jobs:
           if-no-files-found: ignore
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
