@@ -26,6 +26,7 @@ export class VillageScene extends Phaser.Scene {
   private lastPositionSave = 0;
   private renderedEra: EraId | null = null;
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
+  private guideVariants: { modern?: Phaser.GameObjects.Image; historical?: Phaser.GameObjects.Image } = {};
 
   constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
 
@@ -41,6 +42,7 @@ export class VillageScene extends Phaser.Scene {
 
   create(): void {
     this.renderedEra = null;
+    this.guideVariants = {};
     this.targetPoints = [];
     this.nearest = null;
     this.touchVector.set(0, 0);
@@ -109,6 +111,8 @@ export class VillageScene extends Phaser.Scene {
     if (this.vector.lengthSq() > 0) this.facing = Math.abs(this.vector.x) > Math.abs(this.vector.y) ? (this.vector.x < 0 ? 'left' : 'right') : (this.vector.y < 0 ? 'up' : 'down');
     this.player.setVelocity(0, 0).setDepth(this.player.y + 12);
     const activeEra = this.session.snapshot().activeEra;
+    this.guideVariants.modern?.setVisible(activeEra === 'present' || !this.guideVariants.historical);
+    this.guideVariants.historical?.setVisible(activeEra === 'ly_1077');
     const historicalSheet = activeEra === 'ly_1077' && this.textures.exists('player-ly1077-v1');
     if (this.vector.lengthSq() > 0) {
       const animation = historicalSheet ? `player-ly1077-${this.facing}-walk` : `player-${this.facing}-walk`;
@@ -298,8 +302,18 @@ export class VillageScene extends Phaser.Scene {
   private createGuide(x: number, y: number): Phaser.GameObjects.Container {
     // Fictional guide character: a readable world sprite, not a historical portrait.
     const guide = this.add.container(x, y).setDepth(y + 15);
-    if (this.textures.exists('guide-v2')) {
-      guide.add(this.add.image(0, 20, 'guide-v2').setOrigin(.5, 1).setScale(.57));
+    if (this.textures.exists('guide-v2') || this.textures.exists('guide-ly1077-v1')) {
+      if (this.textures.exists('guide-v2')) {
+        this.guideVariants.modern = this.add.image(0, 20, 'guide-v2').setOrigin(.5, 1).setScale(.57);
+        guide.add(this.guideVariants.modern);
+      }
+      if (this.textures.exists('guide-ly1077-v1')) {
+        this.guideVariants.historical = this.add.image(0, 20, 'guide-ly1077-v1').setOrigin(.5, 1).setScale(.57);
+        guide.add(this.guideVariants.historical);
+      }
+      const era = this.session.snapshot().activeEra;
+      this.guideVariants.modern?.setVisible(era === 'present' || !this.guideVariants.historical);
+      this.guideVariants.historical?.setVisible(era === 'ly_1077');
       guide.add(this.add.text(0, 30, 'NGƯỜI DẪN CHUYỆN', {
         fontFamily: '"Be Vietnam Pro", sans-serif',
         fontSize: '11px',
