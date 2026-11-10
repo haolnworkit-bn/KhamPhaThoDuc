@@ -172,6 +172,88 @@
       ],
       "attribution": "Original fictional four-direction chibi illustration created for KhamPhaThoDuc; not historical costume",
       "license": "Project-owned original"
+    },
+    {
+      "id": "player-v2",
+      "category": "character",
+      "kind": "image",
+      "path": "assets/visual/player-v2.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "attribution": "Original illustrated SVG art created for this project; fictional representation",
+      "license": "Project-owned original illustration"
+    },
+    {
+      "id": "guide-v2",
+      "category": "character",
+      "kind": "image",
+      "path": "assets/visual/guide-v2.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present",
+        "ly_1077"
+      ],
+      "attribution": "Original illustrated SVG art created for this project; fictional representation",
+      "license": "Project-owned original illustration"
+    },
+    {
+      "id": "tree-v2",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/visual/tree-v2.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original illustrated SVG art created for this project; fictional representation",
+      "license": "Project-owned original illustration"
+    },
+    {
+      "id": "house-v2",
+      "category": "environment",
+      "kind": "image",
+      "path": "assets/visual/house-v2.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original illustrated SVG art created for this project; fictional representation",
+      "license": "Project-owned original illustration"
+    },
+    {
+      "id": "dinh-tho-duc-v2",
+      "category": "heritage",
+      "kind": "image",
+      "path": "assets/visual/dinh-tho-duc-v2.svg",
+      "anchor": {
+        "x": 0.5,
+        "y": 1
+      },
+      "depthOffset": 0,
+      "eras": [
+        "present"
+      ],
+      "attribution": "Original illustrated SVG art created for this project; fictional representation",
+      "license": "Project-owned original illustration"
     }
   ],
   "animations": []
