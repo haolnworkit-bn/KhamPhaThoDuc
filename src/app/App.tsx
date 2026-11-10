@@ -14,11 +14,13 @@ import { createInitialState, type GameState } from '../shared/types/state';
 import { DialoguePanel } from '../features/dialogue/DialoguePanel';
 import { LocationPanel } from '../features/dialogue/LocationPanel';
 import { JournalPanel } from '../features/journal/JournalPanel';
+import { CulturalTrailPanel } from '../features/culture/CulturalTrailPanel';
+import { CULTURAL_STORAGE_KEY } from '../services/CulturalDiscoveryService';
 import { MobileControls } from '../features/input/MobileControls';
 import { MapPanel } from '../features/map/MapPanel';
 
 type Phase = 'loading' | 'menu' | 'game' | 'error';
-type Modal = { type: 'guide'; step: number } | { type: 'location'; location: HeritageLocation } | { type: 'journal' } | { type: 'help' } | null;
+type Modal = { type: 'guide'; step: number } | { type: 'location'; location: HeritageLocation } | { type: 'journal' } | { type: 'culture' } | { type: 'help' } | null;
 
 export default function App() {
   const [content, setContent] = useState<GameContent | null>(null);
@@ -92,6 +94,7 @@ export default function App() {
   const resetProgress = () => {
     if (!session || !window.confirm('Xóa toàn bộ tiến trình đã lưu trên thiết bị này?')) return;
     session.reset();
+    try { window.localStorage.removeItem(CULTURAL_STORAGE_KEY); } catch { /* Storage can be blocked. */ }
     setModal(null);
     setPhase('menu');
   };
@@ -106,7 +109,7 @@ export default function App() {
         <section className="start-card">
           <div className="eyebrow">Một hành trình khám phá quê hương</div>
           <h1>Thọ Đức<br /><span>Dấu Ấn Thời Gian</span></h1>
-          <p>Khám phá bản làng minh họa, ghi lại các điểm di sản và bước qua cánh cổng thời gian.</p>
+          <p>Đi tìm dấu tích tên làng, sông Cầu, bến Can Vang và những câu chuyện văn hóa Thọ Đức qua từng manh mối.</p>
           {decorationWarning && <small role="status">Trang trí cảnh chưa tải được; game vẫn hoạt động, nhưng không hiển thị cây/nhà minh họa. {decorationWarning}</small>}
           <div className="start-actions">
             <button className="primary-large" onClick={() => begin(false)}>Bắt đầu khám phá</button>
@@ -128,6 +131,7 @@ export default function App() {
         <div className="brand-mark"><span>THỌ ĐỨC</span><small>Dấu Ấn Thời Gian</small></div>
         <div className="status-group">
           <div className="status-pill"><small>THỜI KỲ</small><strong>{eraLabel}</strong></div>
+          <button className="icon-button" onClick={() => setModal({ type: 'culture' })}>Giải mã quê hương</button>
           <button className="icon-button" onClick={() => setModal({ type: 'journal' })}>Nhật ký <span>{state.discoveredLocations.length}/3</span></button>
         </div>
       </header>
@@ -153,6 +157,7 @@ export default function App() {
       {modal?.type === 'guide' && <DialoguePanel dialogue={session.content.dialogues[0]} step={modal.step} onNext={nextDialogue} onClose={closeDialogue} />}
       {modal?.type === 'location' && <LocationPanel location={modal.location} visited={state.discoveredLocations.includes(modal.location.id)} onClose={closeModal} />}
       {modal?.type === 'journal' && <JournalPanel session={session} state={state} onClose={closeModal} onReset={resetProgress} />}
+      {modal?.type === 'culture' && <CulturalTrailPanel state={state} onClose={closeModal} />}
     </main>
   );
 }
