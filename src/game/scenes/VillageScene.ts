@@ -26,13 +26,14 @@ export class VillageScene extends Phaser.Scene {
   private lastPositionSave = 0;
   private renderedEra: EraId | null = null;
   private facing: 'up' | 'down' | 'left' | 'right' = 'down';
+  private guideVariants: { modern?: Phaser.GameObjects.Image; historical?: Phaser.GameObjects.Image } = {};
 
   constructor(private readonly session: GameSession, private readonly assetRegistry: AssetRegistry, private readonly sceneDecorations: SceneDecorationRegistry | null, private readonly mapVisualStyles: MapVisualStyleRegistry) { super('village'); }
 
   preload(): void {
     // Phaser rasterizes these project-owned SVG files once. Missing files degrade gracefully
     // to the existing procedural artwork inside VillageArtRenderer.
-    for (const asset of this.assetRegistry.available('present')) {
+    for (const asset of this.assetRegistry.manifest.assets) {
       if (asset.kind !== 'image' || !asset.path?.endsWith('.svg')) continue;
       const url = AssetRegistry.assetUrl(asset, import.meta.env.BASE_URL);
       if (url && !this.textures.exists(asset.id)) this.load.svg(asset.id, url);
@@ -41,6 +42,7 @@ export class VillageScene extends Phaser.Scene {
 
   create(): void {
     this.renderedEra = null;
+    this.guideVariants = {};
     this.targetPoints = [];
     this.nearest = null;
     this.touchVector.set(0, 0);
@@ -56,10 +58,13 @@ export class VillageScene extends Phaser.Scene {
     this.createTargets();
 
     const state = this.session.snapshot();
+    const initialSheet = state.activeEra === 'ly_1077' && this.textures.exists('player-ly1077-v1')
+      ? 'player-ly1077-v1'
+      : this.textures.exists('player-chibi-v1') ? 'player-chibi-v1' : null;
     this.player = this.physics.add.sprite(
       state.player.x, state.player.y,
-      this.textures.exists('player-chibi-v1') ? 'player-chibi-v1' : 'player-down-idle',
-      this.textures.exists('player-chibi-v1') ? 'down-idle' : undefined,
+      initialSheet ?? 'player-down-idle',
+      initialSheet ? 'down-idle' : undefined,
     );
     this.player.setCircle(15, 9, 26).setCollideWorldBounds(true).setDepth(state.player.y + 12);
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
@@ -105,16 +110,18 @@ export class VillageScene extends Phaser.Scene {
     if (this.vector.lengthSq() > 0) this.vector.normalize().scale(speed);
     if (this.vector.lengthSq() > 0) this.facing = Math.abs(this.vector.x) > Math.abs(this.vector.y) ? (this.vector.x < 0 ? 'left' : 'right') : (this.vector.y < 0 ? 'up' : 'down');
     this.player.setVelocity(0, 0).setDepth(this.player.y + 12);
+    const activeEra = this.session.snapshot().activeEra;
+    this.guideVariants.modern?.setVisible(activeEra === 'present' || !this.guideVariants.historical);
+    this.guideVariants.historical?.setVisible(activeEra === 'ly_1077');
+    const historicalSheet = activeEra === 'ly_1077' && this.textures.exists('player-ly1077-v1');
     if (this.vector.lengthSq() > 0) {
-      const animation = `player-${this.facing}-walk`;
+      const animation = historicalSheet ? `player-ly1077-${this.facing}-walk` : `player-${this.facing}-walk`;
       if (this.player.anims.currentAnim?.key !== animation) this.player.play(animation);
     } else {
       this.player.anims.stop();
-      if (this.textures.exists('player-chibi-v1')) {
-        this.player.setTexture('player-chibi-v1', `${this.facing}-idle`);
-      } else {
-        this.player.setTexture(`player-${this.facing}-idle`);
-      }
+      const sheet = historicalSheet ? 'player-ly1077-v1' : 'player-chibi-v1';
+      if (this.textures.exists(sheet)) this.player.setTexture(sheet, `${this.facing}-idle`);
+      else this.player.setTexture(`player-${this.facing}-idle`);
     }
     const next = { x: this.player.x + this.vector.x * delta / 1000, y: this.player.y + this.vector.y * delta / 1000 };
     const era = this.session.snapshot().activeEra;
@@ -147,6 +154,25 @@ export class VillageScene extends Phaser.Scene {
           });
         }
       });
+      if (this.textures.exists('player-ly1077-v1')) {
+        const historySheet = this.textures.get('player-ly1077-v1');
+        (['down', 'left', 'right', 'up'] as const).forEach((direction, row) => {
+          (['idle', 'walk-a', 'walk-b'] as const).forEach((pose, column) => {
+            const key = `${direction}-${pose}`;
+            if (!historySheet.has(key)) historySheet.add(key, 0, (row * 3 + column) * 48, 0, 48, 60);
+          });
+          const key = `player-ly1077-${direction}-walk`;
+          if (!this.anims.exists(key)) this.anims.create({
+            key,
+            frames: [
+              { key: 'player-ly1077-v1', frame: `${direction}-walk-a` },
+              { key: 'player-ly1077-v1', frame: `${direction}-walk-b` },
+            ],
+            frameRate: 7,
+            repeat: -1,
+          });
+        });
+      }
       return;
     }
     if (this.textures.exists('player-down-idle')) return;
@@ -276,8 +302,18 @@ export class VillageScene extends Phaser.Scene {
   private createGuide(x: number, y: number): Phaser.GameObjects.Container {
     // Fictional guide character: a readable world sprite, not a historical portrait.
     const guide = this.add.container(x, y).setDepth(y + 15);
-    if (this.textures.exists('guide-v2')) {
-      guide.add(this.add.image(0, 20, 'guide-v2').setOrigin(.5, 1).setScale(.57));
+    if (this.textures.exists('guide-v2') || this.textures.exists('guide-ly1077-v1')) {
+      if (this.textures.exists('guide-v2')) {
+        this.guideVariants.modern = this.add.image(0, 20, 'guide-v2').setOrigin(.5, 1).setScale(.57);
+        guide.add(this.guideVariants.modern);
+      }
+      if (this.textures.exists('guide-ly1077-v1')) {
+        this.guideVariants.historical = this.add.image(0, 20, 'guide-ly1077-v1').setOrigin(.5, 1).setScale(.57);
+        guide.add(this.guideVariants.historical);
+      }
+      const era = this.session.snapshot().activeEra;
+      this.guideVariants.modern?.setVisible(era === 'present' || !this.guideVariants.historical);
+      this.guideVariants.historical?.setVisible(era === 'ly_1077');
       guide.add(this.add.text(0, 30, 'NGƯỜI DẪN CHUYỆN', {
         fontFamily: '"Be Vietnam Pro", sans-serif',
         fontSize: '11px',
